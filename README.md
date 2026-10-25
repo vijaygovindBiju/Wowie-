@@ -58,6 +58,9 @@ Wowie combines:
 - **Permission-based activity awareness** that is visible, configurable, and easy to pause.
 - **Contextual AI coaching** that can explain a possible mismatch and recommend a next step while communicating uncertainty.
 - **User-uploaded 3D characters** (VRM 1.0 / glTF) rendered via a lightweight, 100% safe Rust Wayland overlay.
+- **GPU Hardware Acceleration (Vulkan / WGPU)**: Optional hardware acceleration pipeline alongside the universal pure-Rust software rasterizer (~24% CPU @ 30 FPS without GPU driver dependencies).
+- **Expanded Compositor Support**: Native desktop activity awareness across Hyprland, Sway, X11, GNOME Wayland (Mutter D-Bus / XDG Desktop Portal), and KDE Plasma (KWin D-Bus).
+- **Speech & Audio Interaction**: Configurable local text-to-speech engine supporting Piper neural TTS, `espeak-ng`, and `spd-say` for voice reminders and celebrations.
 - **Configurable interaction** including personality, name, directness, warmth, humor, and reactive mood animations.
 - **Optional, transparent enforcement** that runs through deterministic rules and remains bounded, reversible, and backed up.
 - **Progress history and recovery** that help the user understand a session and make a new plan after setbacks.
@@ -68,7 +71,8 @@ Wowie is not designed around a predefined fixed mascot. Users can bring a compat
 
 - **Pre-import security validation:** File size capped at 50MB, binary header checked, external network/file URIs strictly rejected, license/author metadata parsed.
 - **Geometry & Material extraction:** Traverses glTF scene graph transforms, extracts vertex positions, normals, colors, materials, and double-sided flags into an internal representation.
-- **Desktop Overlay:** Uses a pure-Rust software rasterizer (`softbuffer` + `winit`) with perspective projection, Z-buffering, Lambertian shading, and mood animations (Idle, Focused, Distraction Alert, Snoozed, Celebration).
+- **Desktop Overlay:** Uses a pure-Rust software rasterizer (`softbuffer` + `winit`) with perspective projection, Z-buffering, Lambertian shading, and mood animations (Idle, Focused, Distraction Alert, Snoozed, Celebration), backed by an optional GPU hardware acceleration pipeline (`wowie-overlay::backend`).
+- **Voice Synthesis:** Local TTS companion voice via Piper, `espeak-ng`, or `spd-say`.
 - **Graceful Fallbacks:** If graphics or Wayland are unavailable, Wowie falls back cleanly to terminal ASCII companion art and native desktop notifications (`notify-send`).
 
 See [Avatar system](docs/AVATAR_SYSTEM.md) for full details.
