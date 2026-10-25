@@ -332,3 +332,98 @@ async fn test_observer_integrates_native_messaging_origin_cache() {
     assert_eq!(observation.origin.as_deref(), Some("https://crates.io"));
     assert_eq!(observation.source, ObservationSource::BrowserOrigin);
 }
+
+#[test]
+fn test_gnome_window_json_parsing_integration() {
+    use wowie_observer::platform::gnome::GnomeAdapter;
+
+    let json_data = r#"{
+        "100": {
+            "id": 100,
+            "title": "Rust Documentation - docs.rs - Mozilla Firefox",
+            "wm-class": "firefox",
+            "app-id": "org.mozilla.firefox",
+            "has-focus": true
+        },
+        "101": {
+            "id": 101,
+            "title": "Alacritty Terminal",
+            "wm-class": "alacritty",
+            "app-id": "Alacritty",
+            "has-focus": false
+        }
+    }"#;
+
+    let meta = GnomeAdapter::parse_windows_json(json_data).expect("Must parse GNOME windows JSON");
+    assert_eq!(meta.app_id.as_deref(), Some("org.mozilla.firefox"));
+    assert_eq!(
+        meta.window_title.as_deref(),
+        Some("Rust Documentation - docs.rs - Mozilla Firefox")
+    );
+    assert_eq!(meta.origin.as_deref(), Some("docs.rs"));
+    assert!(!meta.is_idle);
+
+    // Test fallback when app-id is empty but wm-class is provided
+    let json_wm_class = r#"{
+        "200": {
+            "id": 200,
+            "title": "wowie repository - GitHub - Google Chrome",
+            "wm-class": "google-chrome",
+            "app-id": "",
+            "has-focus": true
+        }
+    }"#;
+    let meta_wm =
+        GnomeAdapter::parse_windows_json(json_wm_class).expect("Must parse wm-class fallback");
+    assert_eq!(meta_wm.app_id.as_deref(), Some("google-chrome"));
+    assert_eq!(meta_wm.origin.as_deref(), Some("github.com"));
+
+    // Test no focused window returns empty metadata
+    let json_no_focus = r#"{
+        "300": {
+            "id": 300,
+            "title": "Background window",
+            "wm-class": "code",
+            "app-id": "code",
+            "has-focus": false
+        }
+    }"#;
+    let meta_none = GnomeAdapter::parse_windows_json(json_no_focus).expect("Parses without focus");
+    assert_eq!(meta_none, WindowMetadata::empty());
+}
+
+#[test]
+fn test_kde_title_and_class_parsing_integration() {
+    use wowie_observer::platform::kde::KdeAdapter;
+
+    // Direct browser class with title
+    let meta1 = KdeAdapter::parse_active_window(
+        "firefox",
+        "tokio: asynchronous runtime - crates.io - Mozilla Firefox",
+    );
+    assert_eq!(meta1.app_id.as_deref(), Some("firefox"));
+    assert_eq!(meta1.origin.as_deref(), Some("crates.io"));
+
+    // KDE qdbus returns generic "kwin" but title suffix identifies browser
+    let meta2 =
+        KdeAdapter::parse_active_window("kwin", "(50) Lo-Fi Beats - YouTube - Google Chrome");
+    assert_eq!(meta2.app_id.as_deref(), Some("google-chrome"));
+    assert_eq!(meta2.origin.as_deref(), Some("youtube.com"));
+
+    // KDE kdotool returns "kwin-app" with Chromium
+    let meta3 = KdeAdapter::parse_active_window(
+        "kwin-app",
+        "Rust Concurrency Questions - stackoverflow - Chromium",
+    );
+    assert_eq!(meta3.app_id.as_deref(), Some("chromium"));
+    assert_eq!(meta3.origin.as_deref(), Some("stackoverflow.com"));
+
+    // Non-browser application with "kwin" does not infer browser origin
+    let meta4 = KdeAdapter::parse_active_window("kwin", "main.rs - Visual Studio Code");
+    assert_eq!(meta4.app_id.as_deref(), Some("kwin"));
+    assert_eq!(meta4.origin, None);
+
+    // Empty class and title
+    let meta_empty = KdeAdapter::parse_active_window("", "");
+    assert_eq!(meta_empty, WindowMetadata::empty());
+}

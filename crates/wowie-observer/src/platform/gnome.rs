@@ -93,7 +93,7 @@ impl PlatformObserver for GnomeAdapter {
         }
 
         Command::new("gdbus")
-            .arg("--version")
+            .arg("help")
             .output()
             .is_ok_and(|o| o.status.success())
     }

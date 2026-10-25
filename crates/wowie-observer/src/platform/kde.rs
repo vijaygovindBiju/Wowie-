@@ -12,18 +12,73 @@ impl KdeAdapter {
         Self
     }
 
+    /// Infers browser application class from window title suffix.
+    pub fn infer_browser_class(title: &str) -> Option<&'static str> {
+        let trimmed = title.trim();
+        if trimmed.ends_with("- Mozilla Firefox")
+            || trimmed.ends_with("— Mozilla Firefox")
+            || trimmed.ends_with("– Mozilla Firefox")
+            || trimmed.ends_with("- Firefox")
+        {
+            Some("firefox")
+        } else if trimmed.ends_with("- Google Chrome")
+            || trimmed.ends_with("— Google Chrome")
+            || trimmed.ends_with("– Google Chrome")
+        {
+            Some("google-chrome")
+        } else if trimmed.ends_with("- Chromium")
+            || trimmed.ends_with("— Chromium")
+            || trimmed.ends_with("– Chromium")
+        {
+            Some("chromium")
+        } else if trimmed.ends_with("- Brave")
+            || trimmed.ends_with("— Brave")
+            || trimmed.ends_with("- Brave Browser")
+        {
+            Some("brave")
+        } else if trimmed.ends_with("- Microsoft Edge")
+            || trimmed.ends_with("— Microsoft Edge")
+            || trimmed.ends_with("– Microsoft Edge")
+        {
+            Some("microsoft-edge")
+        } else if trimmed.ends_with("- Vivaldi") || trimmed.ends_with("— Vivaldi") {
+            Some("vivaldi")
+        } else if trimmed.ends_with("- Opera") || trimmed.ends_with("— Opera") {
+            Some("opera")
+        } else if trimmed.ends_with("- Zen Browser") || trimmed.ends_with("— Zen Browser") {
+            Some("zen")
+        } else if trimmed.ends_with("- Floorp") || trimmed.ends_with("— Floorp") {
+            Some("floorp")
+        } else if trimmed.ends_with("- LibreWolf") || trimmed.ends_with("— LibreWolf") {
+            Some("librewolf")
+        } else {
+            None
+        }
+    }
+
     /// Parses KWin active window properties (caption and resource class).
     pub fn parse_active_window(class: &str, title: &str) -> WindowMetadata {
-        let app_id = if class.trim().is_empty() {
+        let class_trimmed = class.trim();
+        let title_trimmed = title.trim();
+
+        let window_title = if title_trimmed.is_empty() {
             None
         } else {
-            Some(class.trim().to_string())
+            Some(title_trimmed.to_string())
         };
 
-        let window_title = if title.trim().is_empty() {
-            None
+        let app_id = if let Some(inferred) =
+            window_title.as_deref().and_then(Self::infer_browser_class)
+        {
+            if class_trimmed.is_empty() || class_trimmed == "kwin" || class_trimmed == "kwin-app" {
+                Some(inferred.to_string())
+            } else {
+                Some(class_trimmed.to_string())
+            }
+        } else if !class_trimmed.is_empty() {
+            Some(class_trimmed.to_string())
         } else {
-            Some(title.trim().to_string())
+            None
         };
 
         let origin = if let (Some(c), Some(t)) = (&app_id, &window_title) {
@@ -122,5 +177,33 @@ mod tests {
     fn test_kde_empty_strings() {
         let meta = KdeAdapter::parse_active_window("", "");
         assert_eq!(meta, WindowMetadata::empty());
+    }
+
+    #[test]
+    fn test_kde_caption_only_infers_browser_and_origin() {
+        let meta_firefox = KdeAdapter::parse_active_window(
+            "kwin",
+            "crates.io: Rust Package Registry - Mozilla Firefox",
+        );
+        assert_eq!(meta_firefox.app_id.as_deref(), Some("firefox"));
+        assert_eq!(meta_firefox.origin.as_deref(), Some("crates.io"));
+
+        let meta_chrome = KdeAdapter::parse_active_window(
+            "kwin-app",
+            "YouTube - Broadcast Yourself - Google Chrome",
+        );
+        assert_eq!(meta_chrome.app_id.as_deref(), Some("google-chrome"));
+        assert_eq!(meta_chrome.origin.as_deref(), Some("youtube.com"));
+
+        let meta_chromium = KdeAdapter::parse_active_window(
+            "kwin",
+            "docs.rs - Rust Package Documentation - Chromium",
+        );
+        assert_eq!(meta_chromium.app_id.as_deref(), Some("chromium"));
+        assert_eq!(meta_chromium.origin.as_deref(), Some("docs.rs"));
+
+        let meta_term = KdeAdapter::parse_active_window("kwin", "bash — Konsole");
+        assert_eq!(meta_term.app_id.as_deref(), Some("kwin"));
+        assert_eq!(meta_term.origin, None);
     }
 }

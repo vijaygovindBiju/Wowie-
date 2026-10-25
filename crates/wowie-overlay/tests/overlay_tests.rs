@@ -252,3 +252,54 @@ fn test_display_server_availability_detection() {
         std::env::var("WAYLAND_DISPLAY").is_ok() || std::env::var("DISPLAY").is_ok()
     );
 }
+
+#[test]
+fn test_overlay_config_serde_with_prefer_gpu() {
+    let mut config = wowie_overlay::OverlayConfig::default();
+    assert!(!config.prefer_gpu);
+
+    config.prefer_gpu = true;
+    let json = serde_json::to_string(&config).expect("Serialize OverlayConfig");
+    assert!(json.contains("\"prefer_gpu\":true"));
+
+    let deserialized: wowie_overlay::OverlayConfig =
+        serde_json::from_str(&json).expect("Deserialize OverlayConfig");
+    assert!(deserialized.prefer_gpu);
+
+    // Test default fallback when prefer_gpu is omitted in JSON
+    let json_no_prefer = r#"{"width":400,"height":500,"fps_limit":60,"always_on_top":false,"enable_hyprland_auto_rules":false,"show_hud":true}"#;
+    let deserialized_default: wowie_overlay::OverlayConfig =
+        serde_json::from_str(json_no_prefer).expect("Deserialize without prefer_gpu");
+    assert!(!deserialized_default.prefer_gpu);
+}
+
+#[test]
+fn test_gpu_acceleration_pipeline_integration() {
+    use wowie_overlay::{
+        is_gpu_acceleration_available, select_rendering_backend, GpuAccelerationPipeline,
+        GraphicsBackend,
+    };
+
+    let backend = select_rendering_backend(true);
+    let mut pipeline = GpuAccelerationPipeline::with_backend(backend, 320, 380);
+
+    if is_gpu_acceleration_available() {
+        assert_eq!(backend, GraphicsBackend::VulkanHardware);
+        assert!(pipeline.is_hardware_accelerated());
+        assert_eq!(pipeline.backend(), GraphicsBackend::VulkanHardware);
+    } else {
+        assert_eq!(backend, GraphicsBackend::Software);
+        assert!(!pipeline.is_hardware_accelerated());
+        assert_eq!(pipeline.backend(), GraphicsBackend::Software);
+    }
+
+    assert_eq!(pipeline.width, 320);
+    assert_eq!(pipeline.height, 380);
+
+    pipeline.resize(800, 600);
+    assert_eq!(pipeline.width, 800);
+    assert_eq!(pipeline.height, 600);
+
+    let info = pipeline.device_info();
+    assert!(!info.device_name.is_empty());
+}

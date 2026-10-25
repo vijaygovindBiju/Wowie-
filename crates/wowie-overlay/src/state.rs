@@ -11,6 +11,8 @@ pub struct OverlayConfig {
     pub always_on_top: bool,
     pub enable_hyprland_auto_rules: bool,
     pub show_hud: bool,
+    #[serde(default)]
+    pub prefer_gpu: bool,
 }
 
 impl Default for OverlayConfig {
@@ -22,6 +24,7 @@ impl Default for OverlayConfig {
             always_on_top: true,
             enable_hyprland_auto_rules: true,
             show_hud: true,
+            prefer_gpu: false,
         }
     }
 }

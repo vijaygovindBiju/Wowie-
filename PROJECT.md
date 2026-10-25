@@ -66,7 +66,7 @@
 ## Verification Summary
 - `cargo fmt --check`: Clean (0 errors).
 - `cargo clippy --workspace --all-targets -- -D warnings`: Clean (0 warnings).
-- `cargo test --workspace`: 100% pass across all 8 workspace crates (688 tests offline in <1.8s).
+- `cargo test --workspace`: 100% pass across all 8 workspace crates (767 tests offline in <1.8s).
 - Packaging verified: `makepkg -efd` built `wowie-0.1.0-1-x86_64.pkg.tar.zst` (5.7 MB) with clean upgrade/uninstall behavior.
 - Live graphical verification: `cargo run -p wowie-overlay` verified live on Wayland / Hyprland session; screenshot captured and validated at `/tmp/wowie_overlay_live.png`.
 - Live CLI verification: `cargo run -p wowie-app -- demo` verified end-to-end on Arch Linux / Hyprland.

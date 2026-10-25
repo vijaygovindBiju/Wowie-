@@ -112,6 +112,17 @@ impl GpuAccelerationPipeline {
         }
     }
 
+    pub fn with_backend(backend: GraphicsBackend, width: u32, height: u32) -> Self {
+        let device_info = query_gpu_device_info();
+
+        Self {
+            backend,
+            device_info,
+            width,
+            height,
+        }
+    }
+
     pub fn backend(&self) -> GraphicsBackend {
         self.backend
     }
@@ -139,6 +150,26 @@ mod tests {
     fn test_backend_selection_without_gpu_preference() {
         let backend = select_rendering_backend(false);
         assert_eq!(backend, GraphicsBackend::Software);
+    }
+
+    #[test]
+    fn test_backend_selection_with_gpu_preference() {
+        let backend = select_rendering_backend(true);
+        if is_gpu_acceleration_available() {
+            assert_eq!(backend, GraphicsBackend::VulkanHardware);
+        } else {
+            assert_eq!(backend, GraphicsBackend::Software);
+        }
+    }
+
+    #[test]
+    fn test_gpu_pipeline_with_backend_explicit() {
+        let pipeline =
+            GpuAccelerationPipeline::with_backend(GraphicsBackend::VulkanHardware, 1280, 720);
+        assert_eq!(pipeline.backend(), GraphicsBackend::VulkanHardware);
+        assert!(pipeline.is_hardware_accelerated());
+        assert_eq!(pipeline.width, 1280);
+        assert_eq!(pipeline.height, 720);
     }
 
     #[test]

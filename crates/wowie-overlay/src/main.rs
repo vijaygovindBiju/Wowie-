@@ -58,6 +58,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     i += 1;
                 }
             }
+            "--prefer-gpu" => {
+                config.prefer_gpu = true;
+            }
+            "--help" | "-h" => {
+                println!(
+                    "Usage: wowie-overlay [--width <u32>] [--height <u32>] [--fps <u32>] [--prefer-gpu]"
+                );
+                return Ok(());
+            }
             _ => {}
         }
         i += 1;

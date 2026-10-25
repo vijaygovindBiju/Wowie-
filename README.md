@@ -176,7 +176,7 @@ cargo check --workspace --all-targets
 # Run strict Clippy linter (zero warnings)
 cargo clippy --workspace --all-targets -- -D warnings
 
-# Run all workspace unit, integration, and adversarial tests (676 tests pass offline)
+# Run all workspace unit, integration, and adversarial tests (767 tests pass offline)
 cargo test --workspace
 ```
 

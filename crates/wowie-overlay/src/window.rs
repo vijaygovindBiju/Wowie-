@@ -1,3 +1,4 @@
+use crate::backend::{select_rendering_backend, GpuAccelerationPipeline};
 use crate::error::OverlayError;
 use crate::renderer::Renderer3D;
 use crate::state::{OverlayConfig, OverlayControlEvent};
@@ -78,6 +79,7 @@ struct OverlayApp {
     model: Model3D,
     registry: Option<CharacterRegistry>,
     bridge_rx: Option<Receiver<OverlayControlEvent>>,
+    pub gpu_pipeline: GpuAccelerationPipeline,
     window: Option<Arc<Window>>,
     context: Option<softbuffer::Context<Arc<Window>>>,
     surface: Option<softbuffer::Surface<Arc<Window>, Arc<Window>>>,
@@ -102,11 +104,15 @@ impl OverlayApp {
     ) -> Self {
         let w = config.width as usize;
         let h = config.height as usize;
+        let backend = select_rendering_backend(config.prefer_gpu);
+        let gpu_pipeline =
+            GpuAccelerationPipeline::with_backend(backend, config.width, config.height);
         Self {
             config,
             model,
             registry,
             bridge_rx,
+            gpu_pipeline,
             window: None,
             context: None,
             surface: None,
@@ -312,6 +318,7 @@ impl ApplicationHandler for OverlayApp {
 
         self.renderer
             .resize(size.width as usize, size.height as usize);
+        self.gpu_pipeline.resize(size.width, size.height);
         self.window = Some(window);
         self.context = Some(context);
         self.surface = Some(surface);
@@ -370,6 +377,7 @@ impl ApplicationHandler for OverlayApp {
                     }
                     self.renderer
                         .resize(size.width as usize, size.height as usize);
+                    self.gpu_pipeline.resize(size.width, size.height);
                     if let Some(w) = &self.window {
                         w.request_redraw();
                     }

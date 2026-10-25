@@ -83,3 +83,35 @@ The coach engine must not possess capabilities to run shell commands, alter OS s
 ## Follow-up — 2026-10-25T04:18:58Z
 
 The server has restarted and rate limits have reset. Please resume and finish the remaining milestones for wowie-coach (M4 gate completion, M5 CoachEngine facade, and M6 E2E hardening).
+
+## Follow-up — 2026-10-25T20:21:57Z
+
+Implement and verify GPU hardware acceleration (Vulkan/WGPU), expanded compositor support (GNOME Wayland and KDE Plasma Wayland), and local speech & audio interaction (Piper TTS) for the Wowie desktop AI companion.
+
+Working directory: /media/pirate/Shared/currently working/Wowie
+Integrity mode: development
+
+## Requirements
+
+### R1. GPU Hardware-Accelerated Rendering (Vulkan / WGPU)
+Provide an optional hardware-accelerated rendering pipeline for high-polygon VRM/glTF character models in `wowie-overlay`. The renderer must detect GPU capability, support swapchain and shaders, and automatically fall back to the pure-Rust software rasterizer without crashing on systems without GPU drivers.
+
+### R2. Expanded Wayland Compositor Support
+Integrate focused application and window title observation for GNOME Wayland (via Mutter D-Bus / XDG Desktop Portal) and KDE Plasma Wayland (via KWin D-Bus/Scripting) in `wowie-observer`, respecting active focus session privacy and title sanitization boundaries.
+
+### R3. Speech & Audio Interaction
+Provide local text-to-speech (TTS) audio synthesis (supporting Piper neural TTS, `espeak-ng`, and `spd-say`) in `wowie-avatar` to announce session starts, interventions, breaks, and celebrations with user-configurable voice preferences and complete offline operation.
+
+## Acceptance Criteria
+
+### 1. Functional Verification
+- [ ] GPU rendering backend abstraction initializes and renders or falls back to CPU software rasterizer gracefully on all environments.
+- [ ] GNOME and KDE platform adapters accurately extract focused application and window title or report unavailable without panicking.
+- [ ] Speech synthesizer executes configured TTS binaries asynchronously without blocking audio or main event loop.
+
+### 2. Code Quality & Security Invariants
+- [ ] `#![forbid(unsafe_code)]` remains strictly enforced across all workspace crates.
+- [ ] Zero OS execution authority for AI: voice synthesis and compositor tracking are deterministic and policy-governed.
+- [ ] All workspace tests (`cargo test --workspace`) pass 100% offline.
+- [ ] Zero Clippy warnings (`cargo clippy --workspace --all-targets -- -D warnings`).
+- [ ] Zero formatting diffs (`cargo fmt --check`).
