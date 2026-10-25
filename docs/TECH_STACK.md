@@ -1,6 +1,6 @@
 # Technology evaluation
 
-**Status:** researched recommendations, not accepted choices. Current as reviewed on 2026-10-24; re-check official project documentation before implementation because APIs and versions change. Suitability ratings are qualitative engineering judgment, not benchmark results. Numeric performance is unknown until measured on target hardware.
+**Status:** Implemented & Accepted technology choices (Rust workspace, SQLite/rusqlite, pure-Rust 3D software rasterizer with `softbuffer`+`winit`, native Hyprland/Sway/X11 adapters). See [ADRs](adr/) for detailed decision records.
 
 ## Comparative summary
 

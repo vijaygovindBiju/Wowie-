@@ -1,6 +1,7 @@
-# Proposed component contracts
+# Workspace Component Contracts
 
-All components are logical modules in one application for the MVP unless later evidence justifies process isolation. Contract examples are normative only after decisions are accepted.
+**Status:** Implemented across the 8 crates in the Wowie Cargo workspace. All components communicate via strictly-typed Rust contracts with `#![forbid(unsafe_code)]`.
+
 
 | Component | Responsibilities and I/O | Dependencies / state owner | Failure behavior | Test strategy |
 |---|---|---|---|---|

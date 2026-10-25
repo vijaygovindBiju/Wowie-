@@ -1,0 +1,30 @@
+[package]
+name = "wowie-app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "wowie"
+path = "src/main.rs"
+
+[dependencies]
+wowie-core.workspace = true
+wowie-storage.workspace = true
+wowie-coach.workspace = true
+wowie-observer.workspace = true
+wowie-avatar.workspace = true
+wowie-enforcement.workspace = true
+wowie-overlay.workspace = true
+chrono.workspace = true
+uuid.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+async-trait.workspace = true
+
+[lints]
+workspace = true

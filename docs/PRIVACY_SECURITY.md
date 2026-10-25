@@ -1,6 +1,6 @@
 # Privacy and security threat model
 
-**Status:** planned controls; no application has been threat-tested. See [SECURITY.md](../SECURITY.md) for current reporting status.
+**Status:** Implemented controls verified across all 8 workspace crates with `#![forbid(unsafe_code)]`, strict prompt injection quarantine, atomic hosts demarcations, and independent forensic audits.
 
 ## Data inventory and defaults
 

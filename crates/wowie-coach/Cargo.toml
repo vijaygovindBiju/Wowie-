@@ -1,0 +1,24 @@
+[package]
+name = "wowie-coach"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "AI Coach, dialogue prompt engine, and tone-aware focus guidance for Wowie"
+
+[dependencies]
+wowie-core.workspace = true
+chrono.workspace = true
+uuid.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+[lints]
+workspace = true

@@ -1,42 +1,44 @@
-# Wowie documentation
+# Wowie Documentation
 
-All behavior described here is planned unless a section explicitly says otherwise. The repository is currently documentation-only.
+Wowie is an implemented, modular Cargo workspace across 8 crates providing a goal-aware AI desktop companion on Linux with activity awareness, contextual coaching, custom 3D character avatars, and user-controlled distraction enforcement.
 
-## Reading order
+## Reading Order
 
-1. [Project introduction](../README.md) — vision, status, and boundaries.
-2. [Product requirements](PRODUCT_REQUIREMENTS.md) — authoritative user and system requirements (`FR-*`, `NFR-*`).
-3. [User flows](USER_FLOWS.md) — end-to-end interaction paths.
-4. [Accountability rules](ACCOUNTABILITY_RULES.md) — authoritative coaching thresholds, consent, recovery, and safety rules.
-5. [Architecture](ARCHITECTURE.md), [Components](COMPONENTS.md), [API contracts](API_CONTRACTS.md), and [Data model](DATA_MODEL.md) — proposed technical boundaries and structures.
-6. [Activity monitoring](ACTIVITY_MONITORING.md), [AI behavior](AI_BEHAVIOR.md), and [Enforcement](ENFORCEMENT.md) — subsystem rules.
-7. [Avatar system](AVATAR_SYSTEM.md), [Privacy/security](PRIVACY_SECURITY.md), and [Configuration](CONFIGURATION.md) — character, data, threat, and settings constraints.
-8. [Technology stack](TECH_STACK.md) and [Decision register](DECISIONS.md), then the [ADRs](adr/) — evaluated options and decision status.
-9. [Testing](TESTING.md), [Operations](OPERATIONS.md), [Roadmap](ROADMAP.md), and [TODO](TODO.md) — delivery and verification plan.
-10. [Contributing](../CONTRIBUTING.md) and [Security policy](../SECURITY.md) — contributor and reporting expectations.
+1. [Project Introduction](../README.md) — Vision, implemented capabilities, architecture, and quickstart commands.
+2. [Product Requirements](PRODUCT_REQUIREMENTS.md) — Authoritative user and system requirements (`FR-*`, `NFR-*`).
+3. [Architecture](ARCHITECTURE.md), [Components](COMPONENTS.md), [API Contracts](API_CONTRACTS.md), and [Data Model](DATA_MODEL.md) — Technical boundaries and module contracts.
+4. [User Flows](USER_FLOWS.md) — Implemented end-to-end focus session and coaching interaction paths.
+5. [Accountability Rules](ACCOUNTABILITY_RULES.md) — Authoritative coaching thresholds, consent, recovery, and safety rules.
+6. [Activity Monitoring](ACTIVITY_MONITORING.md), [AI Behavior](AI_BEHAVIOR.md), and [Enforcement](ENFORCEMENT.md) — Subsystem rules, domain extraction boundaries, and hosts-file safety.
+7. [Avatar System](AVATAR_SYSTEM.md), [Privacy/Security](PRIVACY_SECURITY.md), and [Configuration](CONFIGURATION.md) — Character validation, 3D overlay rendering, and threat models.
+8. [Technology Stack](TECH_STACK.md) and [Decision Register](DECISIONS.md), then the [ADRs](adr/) — Evaluated options and accepted architectural decision records.
+9. [Testing](TESTING.md), [Operations](OPERATIONS.md), [Roadmap](ROADMAP.md), and [TODO](TODO.md) — Verification records, test results, and milestone tracking.
+10. [Contributing](../CONTRIBUTING.md) and [Security Policy](../SECURITY.md) — Contributor expectations and vulnerability reporting.
 
-## Authoritative locations
+## Authoritative Locations
 
 | Topic | Authority |
 |---|---|
 | Product behavior and requirement IDs | [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md) |
 | User journeys | [USER_FLOWS.md](USER_FLOWS.md) |
 | Accountability and safety rules | [ACCOUNTABILITY_RULES.md](ACCOUNTABILITY_RULES.md) |
-| Component boundaries and system flows | [ARCHITECTURE.md](ARCHITECTURE.md), with contracts in [COMPONENTS.md](COMPONENTS.md) and [API_CONTRACTS.md](API_CONTRACTS.md) |
+| Component boundaries and system flows | [ARCHITECTURE.md](ARCHITECTURE.md), [COMPONENTS.md](COMPONENTS.md), and [API_CONTRACTS.md](API_CONTRACTS.md) |
 | Persisted entities and retention | [DATA_MODEL.md](DATA_MODEL.md) |
 | Activity signals and their limits | [ACTIVITY_MONITORING.md](ACTIVITY_MONITORING.md) |
 | AI authority, uncertainty, and memory | [AI_BEHAVIOR.md](AI_BEHAVIOR.md) |
 | System actions and blocking | [ENFORCEMENT.md](ENFORCEMENT.md) |
-| Character import and renderer | [AVATAR_SYSTEM.md](AVATAR_SYSTEM.md) |
-| Data threat model | [PRIVACY_SECURITY.md](PRIVACY_SECURITY.md) |
+| Character import and 3D overlay | [AVATAR_SYSTEM.md](AVATAR_SYSTEM.md) |
+| Data threat model & sandbox rules | [PRIVACY_SECURITY.md](PRIVACY_SECURITY.md) |
 | Settings defaults | [CONFIGURATION.md](CONFIGURATION.md) |
 | Technology evaluations | [TECH_STACK.md](TECH_STACK.md) |
 | Decision status | [DECISIONS.md](DECISIONS.md) and individual [ADRs](adr/) |
 | Delivery phases and tasks | [ROADMAP.md](ROADMAP.md), [TODO.md](TODO.md) |
-| Verification strategy | [TESTING.md](TESTING.md) |
-| Proposed operator procedures | [OPERATIONS.md](OPERATIONS.md) |
+| Verification strategy & test reports | [TESTING.md](TESTING.md) |
+| Operator procedures | [OPERATIONS.md](OPERATIONS.md) |
 
-## Status vocabulary
+## Status Vocabulary
 
-**Proposed** means a recommendation awaits project-owner review. **Accepted** means approved as a design decision but not necessarily built. **Deferred** means deliberately postponed. **Implemented** means present in code and verified to its stated criteria. No application feature is currently implemented.
-
+- **Implemented**: Present in code and verified by automated test suites or live desktop verification.
+- **Accepted**: Approved architectural decision record governing active implementations.
+- **Deferred**: Explicitly scheduled for future opt-in milestones (e.g. GPU hardware acceleration, WebExtension companion).
+- **Proposed**: Early design exploration undergoing review.

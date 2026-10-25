@@ -1,0 +1,20 @@
+[package]
+name = "wowie-storage"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "SQLite persistence, transactional migrations, and repository implementations for Wowie"
+
+[dependencies]
+wowie-core.workspace = true
+rusqlite.workspace = true
+chrono.workspace = true
+uuid.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+sha2.workspace = true
+
+[lints]
+workspace = true

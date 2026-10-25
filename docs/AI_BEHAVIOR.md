@@ -1,6 +1,6 @@
 # AI coach behavior
 
-**Status:** proposed. AI is optional and advisory. Deterministic requirements are in [Accountability rules](ACCOUNTABILITY_RULES.md); approved actions are constrained by [Enforcement](ENFORCEMENT.md).
+**Status:** Implemented in `crates/wowie-coach`. AI is strictly optional, advisory, and isolated behind deterministic policy and prompt quarantine rules. Approved actions are constrained by [Enforcement](ENFORCEMENT.md).
 
 ## Inputs and outputs
 

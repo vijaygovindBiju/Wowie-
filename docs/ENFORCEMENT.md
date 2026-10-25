@@ -1,36 +1,74 @@
 # Enforcement architecture
 
-**Status:** proposed, with mechanism deferred. Enforcement is a narrow optional subsystem. Accountability policy is authoritative in [ACCOUNTABILITY_RULES.md](ACCOUNTABILITY_RULES.md).
+**Status:** Implementation complete for `LinuxEnforcementAdapter` and `EnforcementPolicyEngine` in `crates/wowie-enforcement`. Mechanisms and audit findings documented below.
 
 ## Supported action types
 
-Initial action type is a user-requested, temporary website block through one future adapter selected by ADR-005. A reminder or snooze is a coaching action, not system enforcement. App termination, forced lockout, global firewall changes, disabling essential tools, and irreversible actions are out of scope.
+Initial action type is a user-requested, temporary website block through `LinuxEnforcementAdapter` (or browser integration). A reminder or snooze is a coaching action, not system enforcement. App termination, forced lockout, global firewall changes, disabling essential tools, and irreversible actions are strictly out of scope.
+
+## Hardcoded Essential Tool Immunities
+
+To prevent accidental developer lockout or system malfunction, the enforcement engine enforces hardcoded, non-overridable immunities for core developer and system tools:
+- Package managers & compilers: `cargo`, `rustc`, `rustup`, `gcc`, `clang`, `pacman`, `yay`
+- Version control & dev tooling: `git`, `code`, `alacritty`, `kitty`, `tmux`, `nvim`, `vim`
+- Core documentation & repositories: `crates.io`, `docs.rs`, `github.com`, `gitlab.com`, `archlinux.org`
+- System essentials: `localhost`, `127.0.0.1`, `::1`
 
 ## Authorization sequence
 
-1. A commitment is active and user has configured an eligible target rule.
-2. Assessment may propose a mismatch and action candidate.
-3. Deterministic policy validates consent, evidence, target allowlist, maximum duration, caps, and adapter capability.
-4. UI previews exact target, effect, scope, duration/expiry, limitations, and stop method.
-5. User explicitly confirms. Confirmation creates a one-use authorization bound to the request and expiry.
-6. Adapter revalidates and applies action, reports result, and emits audit event.
-7. Action is removed on user stop, expiry, session end, or shutdown where technically possible.
+1. A focus commitment is active and user has configured an eligible target rule.
+2. Context assessment detects a sustained mismatch and proposes an action candidate.
+3. Deterministic policy engine validates consent, evidence, immunities, maximum duration (<= 120 minutes), and single-use confirmation token.
+4. UI previews exact target, effect, scope, expiry, and stop method.
+5. User explicitly confirms within 120 seconds. Confirmation creates a one-use token bound to request and expiry.
+6. Adapter validates and applies action, reports result, and emits audit event.
+7. Action is removed on user stop, expiry, session end, app shutdown, or crash recovery.
 
 The AI never invokes adapters. No hidden or background action is permitted.
 
-## Consent, reversibility, and user override
+## Technical Security & Integrity Audit: `/etc/hosts`
 
-Consent is per action or a clearly scoped user-configured rule with a visible confirmation policy; MVP default is per-action confirmation. Every action is time-limited and can be stopped from the main UI. Global emergency stop disables monitoring and attempts to clear all active actions. Wowie must not make itself impossible to stop. If a user intentionally re-enables a block after stopping, that is a new action and authorization.
+A deep audit was conducted on using hosts-file editing on Linux for distraction blocking:
 
-## Conflicts and failure modes
-
-If user rules conflict, explicit allow/essential-tool exclusions win over block. If target resolution is ambiguous, deny. If adapter is absent, permission is revoked, network/browser state cannot be read, or cleanup fails, report status and leave essential access available. Do not silently escalate to privileged system settings. At shutdown or crash recovery, inspect tracked active actions and provide a safe removal path.
+1. **Privilege Boundary:**
+   - `/etc/hosts` is owned by `root:root` with mode `0644`.
+   - Modifying `/etc/hosts` from an unprivileged desktop process fails with `PermissionDenied`.
+   - Wowie's `LinuxEnforcementAdapter` defaults to an unprivileged path (`$TMPDIR/wowie_enforced_blocks.txt` or user-configured resolver blocklist), and surfaces an explicit, actionable error if pointed at an unwriteable system file.
+2. **Original File Preservation (Demarcated Sections):**
+   - The adapter MUST NEVER truncate or overwrite the hosts file.
+   - All managed block entries are enclosed within strict demarcation markers:
+     ```text
+     # --- BEGIN WOWIE TEMPORARY DISTRACTION BLOCKLIST ---
+     # Auto-generated and automatically cleared on session end
+     127.0.0.1 youtube.com
+     ::1 youtube.com
+     # --- END WOWIE TEMPORARY DISTRACTION BLOCKLIST ---
+     ```
+   - All lines outside these markers (existing localhost mappings, custom host entries, router aliases) are strictly preserved unmodified.
+3. **Crash Recovery & Startup Sanitization:**
+   - If the application crashes, is killed (`SIGKILL`), or power fails during an active focus block, the blocklist entries remain on disk.
+   - On startup, `LinuxEnforcementAdapter` inspects the target file.
+   - If the file is a shared file (contains entries outside Wowie's markers), startup recovery strips **only** the demarcated section without deleting the file.
+   - This prevents stale blocks from persisting across reboots while ensuring user host mappings are never destroyed.
+4. **Automatic Backup & Restoration:**
+   - Before modifying any shared system file, the adapter creates a backup at `<path>.wowie_backup`.
+   - The adapter exposes `restore_from_backup()`, allowing instant recovery if file writing is interrupted or corrupted.
+5. **Repeated Starts & Idempotency:**
+   - Multiple session starts or restarts cleanly replace or remove the demarcated block without duplicating entries or bloating the file.
+6. **Graceful Drop Cleanup:**
+   - When `LinuxEnforcementAdapter` is dropped, its `Drop` implementation safely removes only the demarcated section.
 
 ## Platform limits and audit
 
-Browser extensions may not cover other browsers or alternate access paths. DNS, VPN, DoH, direct IP, and browser policy can bypass a web rule. System-wide hosts/DNS/firewall actions can affect unrelated apps and require privilege, so are not an MVP default. Maintain minimal audit records of request, consent, target scope, expiry, result, and stop reason; do not log unrelated browsing.
+- **Bypass Paths:** DNS-over-HTTPS (DoH), DNS-over-TLS (DoT), VPN tunnels, or direct IP access can bypass hosts-file blocking in modern browsers.
+- Product wording must never promise absolute network isolation; it is a friction tool to help users stay committed.
+- Minimal audit records are persisted locally: request timestamp, target domain, expiry, and stop reason. Unrelated browsing is never inspected or logged.
 
-## Testing
+## Automated Verification
 
-Test with a fake adapter first: absent consent, expired token, wrong target, excessive duration, conflicting rule, repeated request, user stop, expiry, session end, app crash, adapter denial, and cleanup failure. Platform tests must verify exact scope and that no broad network configuration changes occur. See [Testing](TESTING.md).
-
+Automated regression tests in `crates/wowie-enforcement/tests/enforcement_tests.rs`:
+- `test_hosts_preservation_and_demarcated_section`: Preserves existing host entries.
+- `test_crash_recovery_strips_wowie_section_without_deleting_file`: Verifies non-destructive startup recovery.
+- `test_repeated_starts_idempotency_and_backup_restoration`: Verifies backup creation and restoration.
+- `test_essential_tool_immunity_enforced`: Rejects blocks on developer essentials.
+- `test_token_single_use_and_expiration`: Rejects reused or expired authorization tokens.

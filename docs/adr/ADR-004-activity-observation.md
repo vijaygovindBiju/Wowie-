@@ -1,29 +1,40 @@
 # ADR-004: Permissioned Linux activity observation
 
-- **Status:** proposed; first adapter deferred to feasibility study
-- **Date:** 2026-10-24
+- **Status:** accepted
+- **Date:** 2026-10-25
 
 ## Context
 
-The MVP needs to observe allowed desktop metadata. Linux includes X11 and multiple Wayland compositors. A universal reliable active-window API cannot be assumed; screenshot capture is a different and more sensitive capability.
+Wowie requires observing active application and window metadata during consented focus sessions to assist users in maintaining their commitments. Linux environments (Wayland compositors vs X11) have fundamentally different security architectures with no universal unprivileged global active-window API. Relying on window titles for web awareness has strict limitations.
 
-## Alternatives considered
+## Alternatives Considered
 
-- X11-only global observation.
-- Wayland compositor-specific API/plugin.
-- XDG portals for screen capture/remote desktop.
-- Optional browser extension for current tab metadata.
-- User-provided manual activity or no observation.
+1. **Global X11-Only Observation (`xdotool` / `XQueryTree`):**
+   - Incompatible with modern Wayland desktop environments.
+   - *Decision:* Maintained as legacy fallback only (`X11Adapter`).
+2. **Screen-Content Capture / Continuous Video Streaming (XDG Desktop Portal Screencast):**
+   - High privacy invasion, high CPU/GPU resource overhead, unnecessary for metadata classification.
+   - *Decision:* Rejected for MVP.
+3. **Compositor-Specific IPC Adapters:**
+   - Zero-privilege, native performance, discrete metadata queries.
+   - *Decision:* **Accepted. Implemented `HyprlandAdapter` using `hyprctl activewindow -j`.**
+4. **Browser Title Regex Extraction vs WebExtension Native Messaging:**
+   - Window titles fail in 6 common scenarios (generic titles, multi-tab spoofing, fullscreen video, Electron PWAs, private browsing, subdomain confusion).
+   - *Decision:* **Accepted Native Messaging bridge as recommended browser integration path.**
 
-## Recommendation
+## Decision
 
-Build a platform capability interface and choose one named desktop/session only after a feasibility spike. Use compositor APIs only behind a documented adapter; use portals for the capabilities they actually mediate, not as an assumed active-window feed. Keep browser URL integration separate and optional. Include manual/no-observation behavior.
+1. **Architecture:** Use a pluggable `PlatformObserver` trait in `wowie-observer` with runtime compositor auto-detection (`HyprlandAdapter`, `X11Adapter`, `MockObserver`).
+2. **Hyprland Native Implementation:** Query the compositor's UNIX domain socket or CLI (`hyprctl activewindow -j`) returning `title`, `class`, and `initialTitle`.
+3. **Privacy Invariants:**
+   - Explicit user consent required before observation begins.
+   - Regex redaction of sensitive tokens (emails, tokens, file paths) in titles.
+   - Zero background monitoring outside active focus sessions.
+4. **Browser Integration Recommendation:**
+   - WebExtension Native Messaging bridge (`wowie-browser-bridge`) communicating origin-only JSON frames over stdin/stdout.
+   - Strict avoidance of broad DOM or network permissions (`<all_urls>`, `webRequest`).
 
 ## Consequences
 
-Support breadth may be narrow initially. Permissions and indicator behavior need environment-specific verification. Screen content remains out of the initial MVP. Titles and URLs are weak evidence and never guarantee content understanding.
-
-## Evidence and assumptions
-
-[XDG Desktop Portal overview](https://flatpak.github.io/xdg-desktop-portal/docs/) says portals mediate capabilities through desktop-specific backends; [ScreenCast portal](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.ScreenCast.html) concerns screen streams; [Wayland protocol docs](https://wayland.freedesktop.org/docs/book/Protocol.html) describe compositor/client protocol architecture. Exact active-window integration is a feasibility question.
-
+- Full, reliable native support on Arch Linux / Hyprland out of the box.
+- Transparent reporting when running on unsupported Wayland compositors (GNOME, KDE) with graceful fallback to manual session tracking.

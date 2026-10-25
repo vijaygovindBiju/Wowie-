@@ -1,6 +1,6 @@
 # ADR-001: Modular single-application architecture
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-10-24
 
 ## Context

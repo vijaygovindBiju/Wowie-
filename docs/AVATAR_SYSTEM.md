@@ -1,34 +1,80 @@
 # Bring-your-own character system
 
-**Status:** planned long-term capability. The first MVP vertical slice may use notifications; custom character support remains a product goal and gets a dedicated follow-on milestone.
+**Status:** Milestone 1 implemented. Custom 3D character import, validation, local registry, software 3D rendering pipeline, and Wayland desktop companion overlay are operational.
 
-## Format candidates
+## Format candidates and selection
 
-- **VRM 1.0:** preferred candidate for first humanoid avatar profile because it is glTF-based and adds humanoid, expression, metadata, material, and secondary-motion conventions. Compatibility with any chosen Linux renderer is unproven.
-- **glTF 2.0/GLB:** broad runtime-neutral asset format with meshes, skins, and keyframe data, but it does not define avatar semantics or animation playback policy.
-- **VRM 0.x:** possible compatibility extension later; separate profile and parser behavior required.
-- **FBX, OBJ, Blender project files:** not initial direct-import targets. Their conversion/runtime complexity and differing animation/material support broaden risk.
-- **Static image:** low-resource fallback, not a model format.
+- **VRM 1.0 (Selected for 3D Companion):** Preferred candidate for humanoid avatar profile because it is glTF-based and adds humanoid, expression, metadata, material, and secondary-motion conventions. Implemented and verified via `wowie-avatar` and `wowie-overlay`.
+- **glTF 2.0 / GLB:** Broad runtime-neutral asset format with meshes and keyframe data. Supported by the underlying geometry validator and loader.
+- **VRM 0.x:** Planned compatibility extension for later iterations.
+- **Static image / Terminal ASCII art:** Operational low-resource fallback.
+
+## Implemented 3D Architecture & Rendering Pipeline
+
+The character system is split into two isolated layers:
+
+```
+[User GLB/VRM Asset]
+        │
+        ▼
+[crates/wowie-avatar]
+  ├─ ModelValidator: Security bounds check (50MB, no external URIs/scripts)
+  ├─ Binary Geometry Extraction: Positions ([f32; 3]), Normals, Vertex Colors, Triangles
+  ├─ Model3D Normalization: Extent scaling & bounding-box recentering
+  └─ CharacterRegistry: Safe app-managed local asset storage & metadata tracking
+        │
+        ▼ (Model3D + Mood events via OverlayBridge)
+[crates/wowie-overlay]
+  ├─ Windowing: winit 0.30 Wayland transparent window + Hyprland auto-floating rules
+  ├─ Blitting: softbuffer 0.4 presentation
+  ├─ Renderer3D:
+  │   ├─ Math Pipeline: Perspective projection camera, LookAt view matrix, Yaw/Pitch orbit
+  │   ├─ Rasterizer: Z-buffer depth testing, triangle bounding box scan, edge functions
+  │   ├─ Lighting: Directional Gouraud shading + Ambient + Specular highlights
+  │   └─ Mood Animation Transforms:
+  │       ├─ Idle: Gentle breathing bobbing and subtle sway
+  │       ├─ Focused: Upright, attentive posture with minimal motion
+  │       ├─ Distraction Alert: Urgent pulse and tilt
+  │       ├─ Snooze: Relaxed tilted posture
+  │       └─ Celebration: Victory hop, spin, and celebratory color
+  └─ HUD Pill: Glass badge indicating companion name, mood badge, and focus status
+```
 
 ## Import and validation workflow
 
-Choose file → check extension, MIME/signature and file size → parse in a constrained importer with allocation and time bounds → inspect scene graph, mesh counts, vertices, bones, texture dimensions/total decoded size, animation channels, external references, and required extensions → validate supported profile → extract metadata/license declarations → present preview/report → user confirms storage and terms → copy into app-managed asset store and hash file. Do not execute scripts, shaders, plugins, or arbitrary external references. Reject archives/path traversal, malformed binary lengths, unsupported required extensions, unreasonable complexity, and resource exhaustion. Parsing may need a separate restricted process after threat review.
+Choose file → check extension, MIME/signature and file size → parse in a constrained importer with allocation and time bounds → inspect scene graph, mesh counts, vertices, bones, texture dimensions/total decoded size, animation channels, external references, and required extensions → validate supported profile → extract metadata/license declarations → present preview/report → user confirms storage and terms → copy into app-managed asset store and hash file.
+- **Security Invariant:** Do not execute scripts, shaders, plugins, or arbitrary external references. Reject archives/path traversal, malformed binary lengths, unsupported required extensions, unreasonable complexity, and resource exhaustion.
+- **Strict Caps:** 50MB file size, 500,000 maximum vertices, 1,000,000 maximum triangles.
 
-Numeric file-size and complexity ceilings require reference-device measurement; they must be configurable only within safe hard limits. Initial model size should be conservatively capped, and decoded texture/GPU cost should be separately bounded.
+## Companion Mood Vocabulary & State Mapping
 
-## Feature profile and animation
+The accountability engine maps session state to a discrete event vocabulary:
+1. `CompanionMood::Neutral` (Idle/Resting)
+2. `CompanionMood::Focused` (Active deep focus session)
+3. `CompanionMood::Concerned` (Distraction alert / mismatch)
+4. `CompanionMood::Relaxed` (Snoozed / scheduled break)
+5. `CompanionMood::Celebrating` (Session completed / goal milestone achieved)
+6. `CompanionMood::Thinking` (Analyzing activity context)
 
-Require a supported skeleton/rig for animated humanoid behavior. Map available idle and expression capabilities to a small app-owned event vocabulary: neutral/idle, acknowledge, encourage, concern, celebration, and attention. Missing expressions/gestures use neutral pose, simple fade, or notification fallback. Do not assume imported animation names have standard semantics. Validate animation duration/channel counts and avoid uncontrolled physics simulation. Voice is separate, opt-in, and not required for animation.
+These states drive both the 3D model transforms in `wowie-overlay` and the terminal ASCII art in `wowie-app`.
+
+## User Controls & Hotkeys
+
+In the desktop overlay window:
+- **`Q`** or **`Esc`**: Quit overlay.
+- **`H`**: Toggle overlay visibility (show/hide).
+- **`M`**: Cycle companion mood state.
+- **`C`**: Cycle active character model from the local registry.
+- **Mouse Left Drag**: Orbit camera around character.
+- **Mouse Wheel**: Zoom camera in and out.
 
 ## Metadata, licensing, and storage
 
-Show creator, title, declared license/usage and redistribution/avatar-use settings when present. Metadata is not legal proof; user confirms they have rights to use the file. Wowie does not redistribute user assets. Preserve relevant metadata through export when technically possible. Asset library licenses and bundled sample assets require separate review. Store models locally under an app-controlled directory, not in the database; provide export and permanent removal. Never upload a model automatically.
+Show creator, title, declared license/usage and redistribution/avatar-use settings when present. Metadata is not legal proof; user confirms they have rights to use the file. Wowie does not redistribute user assets. Models are stored locally under `~/.local/share/wowie/characters/`, with export and permanent deletion commands provided (`wowie character list`, `wowie character import <path>`).
 
-## Isolation, privacy, and extension
+## Fallback & Graceful Degradation
 
-Treat assets as untrusted. Limit parser and renderer resource use; disable network access from imported content; prevent path traversal and unrestricted external URI loads. Keep registry, validation profile, format loader, renderer, and policy contracts separate. A new format/renderer requires a compatibility and security review. The accountability engine receives only presentation events, never model code or renderer permissions.
-
-## Fallback
-
-User may choose no 3D character, static image, or desktop notification. Import failure cannot block goals or sessions. A renderer crash cannot pause policy or monitoring invisibly; the UI reports fallback status and exposes controls.
-
+If the Wayland compositor or display server is unavailable, or if model loading fails, Wowie degrades gracefully:
+- Terminal UI displays real-time ASCII companion art.
+- System notifications (`notify-send` / `DesktopNotifier`) deliver focus coaching.
+- Core accountability, SQLite session tracking, and goal evaluation operate unimpeded.

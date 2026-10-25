@@ -1,6 +1,6 @@
 # ADR-003: Optional, advisory AI execution
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-10-24
 
 ## Context

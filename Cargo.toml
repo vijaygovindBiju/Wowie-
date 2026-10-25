@@ -1,0 +1,75 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/wowie-core",
+    "crates/wowie-storage",
+    "crates/wowie-coach",
+    "crates/wowie-observer",
+    "crates/wowie-avatar",
+    "crates/wowie-enforcement",
+    "crates/wowie-app",
+    "crates/wowie-overlay",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["Wowie Contributors"]
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+wowie-core = { path = "crates/wowie-core" }
+wowie-storage = { path = "crates/wowie-storage" }
+wowie-coach = { path = "crates/wowie-coach" }
+wowie-observer = { path = "crates/wowie-observer" }
+wowie-avatar = { path = "crates/wowie-avatar" }
+wowie-enforcement = { path = "crates/wowie-enforcement" }
+wowie-overlay = { path = "crates/wowie-overlay" }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.10", features = ["v4", "serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0"
+rusqlite = { version = "0.32", features = ["bundled", "chrono", "uuid"] }
+sha2 = "0.10"
+async-trait = "0.1"
+tokio = { version = "1.40", features = ["macros", "rt-multi-thread", "time", "process", "sync", "io-std"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+gltf = { version = "1.4", features = ["import", "names", "utils"] }
+winit = { version = "0.30", default-features = false, features = ["wayland", "x11", "rwh_06"] }
+softbuffer = { version = "0.4", default-features = false, features = ["wayland", "x11"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+missing_const_for_fn = "allow"
+too_many_arguments = "allow"
+too_many_lines = "allow"
+similar_names = "allow"
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_sign_loss = "allow"
+cast_precision_loss = "allow"
+struct_excessive_bools = "allow"
+doc_markdown = "allow"
+uninlined_format_args = "allow"
+float_cmp = "allow"
+match_like_matches_macro = "allow"
+match_same_arms = "allow"
+redundant_closure_for_method_calls = "allow"
+option_option = "allow"
+option_if_let_else = "allow"
+needless_pass_by_value = "allow"
+suboptimal_flops = "allow"
+significant_drop_tightening = "allow"
+duration_suboptimal_units = "allow"

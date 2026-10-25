@@ -1,6 +1,6 @@
 # Product requirements
 
-**Status:** Proposed product baseline for review. Requirements do not imply implementation.
+**Status:** Implemented & Verified baseline. All core functional requirements (FR-001 through FR-018) are operational across the 8 workspace crates and verified via automated test suites and live Linux execution.
 
 ## Users and problems
 

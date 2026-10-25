@@ -1,0 +1,18 @@
+# Rust build artifacts
+/target/
+**/*.rs.bk
+*.pdb
+
+# Agent & coordinator scratch directories
+/.agents/
+/rust_out
+
+# Editor & IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
