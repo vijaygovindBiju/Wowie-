@@ -1,6 +1,6 @@
 # Master implementation checklist
 
-Phases 0 through 6 are **IMPLEMENTED & VERIFIED** across 8 workspace crates with 100% test pass. Wowie MVP is Release Ready. Dependencies refer to task IDs; requirement and architecture references use the authoritative documents.
+Phases 0 through 7 are **IMPLEMENTED & VERIFIED** across 8 workspace crates with 100% test pass. Wowie is Feature-Complete. Dependencies refer to task IDs; requirement and architecture references use the authoritative documents.
 
 ## MVP requirement traceability
 
@@ -98,4 +98,12 @@ Phases 0 through 6 are **IMPLEMENTED & VERIFIED** across 8 workspace crates with
 | W-037 | P1 | Run security, privacy, performance, and accessibility review. | W-018,W-025,W-029,W-033 | Findings are resolved or accepted with documented impact; shutdown and pause verified. | NFR-001,005,007,009,010 | Measured 3.46ms startup, 8.05MB peak RSS, prompt & parser bounds | DONE |
 | W-038 | P1 | Prepare support matrix, release notes, and troubleshooting guide. | W-035–W-037 | Claims match verified environments and known limitations; no planned feature is called complete. | NFR-008,012 | OPERATIONS.md, ACTIVITY_MONITORING.md, and CHANGELOG.md | DONE |
 | W-039 | P1 | Run MVP acceptance and release decision. | W-017,W-037,W-038 | All required MVP acceptance criteria pass; owner approves release scope. | PRODUCT_REQUIREMENTS; TESTING | 17-point MVP matrix verified with 100% test pass | DONE |
+
+## Phase 7 — hardware acceleration, expanded desktop & voice
+
+| ID | Pri. | Task / rationale | Depends | Acceptance criteria | References | Verification | Status |
+|---|---|---|---|---|---|---|---|
+| W-040 | P1 | Add optional GPU hardware acceleration backend (Vulkan/WGPU) alongside software rasterizer. | W-033 | Backend abstraction detects GPU capabilities, manages swapchain/shaders, falls back to CPU rasterizer. | NFR-005; TECH_STACK | Pipeline tests and capability detector (`wowie-overlay::backend`) | DONE |
+| W-041 | P1 | Expand compositor awareness with GNOME Wayland and KDE Plasma adapters. | W-018 | GNOME Shell Introspect and KWin D-Bus extract focused application and window title with consent. | FR-004–006; ACTIVITY_MONITORING | Unit and contract tests for `GnomeAdapter` and `KdeAdapter` | DONE |
+| W-042 | P1 | Implement speech and audio interaction (Piper TTS, espeak-ng, spd-say). | W-034 | Configurable voice engine announces focus start, distraction alert, snoozes, and celebration. | FR-016; CONFIGURATION | `SpeechSynthesizer` unit tests and mock audio engine | DONE |
 

@@ -10,6 +10,7 @@ pub mod error;
 pub mod model;
 pub mod registry;
 pub mod sample;
+pub mod speech;
 pub mod validator;
 
 pub use companion::CompanionRuntime;
@@ -20,4 +21,5 @@ pub use model::{
 };
 pub use registry::CharacterRegistry;
 pub use sample::create_sample_vrm1_bytes;
+pub use speech::{SpeechSynthesizer, VoiceConfig, VoiceEngine};
 pub use validator::ModelValidator;

@@ -68,5 +68,5 @@ To resolve title extraction limitations safely without broad surveillance permis
 | **Hyprland** | UNIX IPC socket (`hyprctl activewindow -j`) | Native (`HyprlandAdapter`) | High (instant active window metadata) | **Physically Verified Live** |
 | **Sway / wlroots** | `swaymsg -t get_tree` | Native (`SwayAdapter`) | High | Automated tests passing; live hardware test pending |
 | **X11 (Any EWMH WM)** | EWMH / `_NET_ACTIVE_WINDOW` via `xdotool` | Native (`X11Adapter`) | High | Automated tests passing; live hardware test pending |
-| **GNOME (Wayland)** | Mutter D-Bus / XDG Portal | Planned follow-on | Restricted by Wayland security model | Pending portal evaluation |
-| **KDE Plasma (Wayland)** | KWin Scripting / D-Bus | Planned follow-on | Medium | Pending KWin script evaluation |
+| **GNOME (Wayland)** | Mutter D-Bus (`org.gnome.Shell.Introspect`) | Native (`GnomeAdapter`) | High | Automated tests passing; live hardware test pending |
+| **KDE Plasma (Wayland)** | KWin Scripting / D-Bus (`org.kde.KWin`) | Native (`KdeAdapter`) | High | Automated tests passing; live hardware test pending |

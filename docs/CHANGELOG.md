@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-10-26
+
+### Added
+- **GPU Hardware Acceleration Pipeline (`wowie-overlay::backend`):**
+  - Added `GraphicsBackend` abstraction with `VulkanHardware` support alongside the pure-Rust software rasterizer (`softbuffer`).
+  - Added `is_gpu_acceleration_available()` and `query_gpu_device_info()` detecting Vulkan loader (`libvulkan.so.1`) and hardware capabilities.
+  - Implemented graceful fallback ensuring high-polygon models render reliably without driver crashes.
+- **Expanded Compositor Support (`wowie-observer`):**
+  - Added native `GnomeAdapter` for GNOME Shell Wayland via `org.gnome.Shell.Introspect`.
+  - Added native `KdeAdapter` for KDE Plasma Wayland via KWin D-Bus and scripting interfaces.
+  - Updated automatic platform detection to support Hyprland, Sway, GNOME, KDE Plasma, and X11 seamlessly.
+- **Speech & Audio Interaction (`wowie-avatar::speech`):**
+  - Added `SpeechSynthesizer` supporting local Piper TTS (`piper`), `espeak-ng`, and Speech Dispatcher (`spd-say`).
+  - Added contextual spoken announcements for focus sprint start, distraction alerts, snooze breaks, and celebration.
+
 ## [0.1.0] - 2026-10-25
 
 ### Added

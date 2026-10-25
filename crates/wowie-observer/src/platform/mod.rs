@@ -1,4 +1,6 @@
+pub mod gnome;
 pub mod hyprland;
+pub mod kde;
 pub mod mock;
 pub mod sway;
 pub mod x11;
@@ -24,6 +26,16 @@ pub fn detect_platform_observer() -> Box<dyn PlatformObserver> {
     let sway = sway::SwayAdapter::new();
     if sway.is_available() {
         return Box::new(sway);
+    }
+
+    let gnome = gnome::GnomeAdapter::new();
+    if gnome.is_available() {
+        return Box::new(gnome);
+    }
+
+    let kde = kde::KdeAdapter::new();
+    if kde.is_available() {
+        return Box::new(kde);
     }
 
     let x11 = x11::X11Adapter::new();

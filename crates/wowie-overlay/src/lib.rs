@@ -5,12 +5,17 @@
 //! floating desktop overlay with dynamic mood animations, Z-buffer depth testing,
 //! and interactive show/hide/quit controls.
 
+pub mod backend;
 pub mod error;
 pub mod math;
 pub mod renderer;
 pub mod state;
 pub mod window;
 
+pub use backend::{
+    is_gpu_acceleration_available, query_gpu_device_info, select_rendering_backend,
+    GpuAccelerationPipeline, GpuDeviceInfo, GraphicsBackend,
+};
 pub use error::OverlayError;
 pub use math::{Mat4, Vec3, Vec4};
 pub use renderer::{Camera3D, RenderStats, Renderer3D};

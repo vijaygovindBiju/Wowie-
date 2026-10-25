@@ -11,10 +11,11 @@ Welcome to **Wowie**, your customizable, goal-aware AI companion on Linux. Wowie
 3. [The Core Focus Workflow](#3-the-core-focus-workflow)
 4. [Using the Terminal Interface (TUI)](#4-using-the-terminal-interface-tui)
 5. [3D Companion Character & Desktop Overlay](#5-3d-companion-character--desktop-overlay)
-6. [Browser Extension Companion](#6-browser-extension-companion)
-7. [Distraction Enforcement & Website Blocking](#7-distraction-enforcement--website-blocking)
-8. [CLI Command Reference](#8-cli-command-reference)
-9. [Privacy, Data Storage & Reset](#9-privacy-data-storage--reset)
+6. [Speech & Audio Interaction (TTS)](#6-speech--audio-interaction-tts)
+7. [Browser Extension Companion](#7-browser-extension-companion)
+8. [Distraction Enforcement & Website Blocking](#8-distraction-enforcement--website-blocking)
+9. [CLI Command Reference](#9-cli-command-reference)
+10. [Privacy, Data Storage & Reset](#10-privacy-data-storage--reset)
 
 ---
 
@@ -178,9 +179,39 @@ Your companion automatically changes animation and posture depending on your foc
 - **Snoozed:** Relaxed posture while interventions are snoozed.
 - **Celebration:** Joyful bouncing animation when a session is completed!
 
+### GPU Hardware Acceleration (Vulkan / WGPU)
+
+Wowie provides two rendering backends for 3D character display:
+1. **Pure-Rust Software Rasterizer (`softbuffer`):** The default backend. Uses zero external GPU drivers, works universally across Wayland and X11, and uses only ~24% CPU of one core at 30 FPS.
+2. **Vulkan Hardware Acceleration:** For complex, high-polygon VRM characters (50k+ triangles), Wowie detects Vulkan libraries (`libvulkan.so.1`) and hardware acceleration capabilities. If hardware acceleration is present, it offloads geometry transforms to your GPU while automatically falling back to software rasterization if a device error occurs.
+
 ---
 
-## 6. Browser Extension Companion
+## 6. Speech & Audio Interaction (TTS)
+
+Give your 3D companion character an audible voice for focus sprint milestones, distraction alerts, and celebration!
+
+### Supported Local Voice Engines
+
+Wowie integrates with local Linux text-to-speech tools with zero cloud latency and full privacy:
+- **Piper TTS (`piper`):** High-quality local neural text-to-speech with natural voice models.
+- **espeak-ng (`espeak-ng`):** Fast, lightweight multi-lingual software speech synthesizer.
+- **Speech Dispatcher (`spd-say`):** Standard Linux desktop accessibility speech service.
+
+### Companion Voice Announcements
+
+When voice is enabled in settings, your companion speaks short, contextual prompts:
+- **Sprint Start:** *"Focus session active. Stay in the flow."*
+- **Distraction Alert:** *"Hey! Stay focused on your goal."*
+- **Snooze:** *"Reminder snoozed. Taking a brief pause."*
+- **Celebration:** *"Congratulations! You completed your focus session."*
+- **Break:** *"Enjoy your break."*
+
+Audio playback operates asynchronously via system audio servers (`pipewire` / `pulseaudio` / `alsa`), ensuring the companion UI remains responsive.
+
+---
+
+## 7. Browser Extension Companion
 
 To provide accurate web origin detection without relying on fragile window title heuristics, install the lightweight Wowie WebExtension.
 

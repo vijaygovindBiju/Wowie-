@@ -173,8 +173,8 @@ To remove the registration:
 | **Arch Linux + Hyprland** | UNIX IPC socket (`hyprctl activewindow -j`) | `HyprlandAdapter` | **Physically Verified Live** |
 | **Sway / wlroots** | UNIX IPC tree (`swaymsg -t get_tree`) | `SwayAdapter` | Implemented; 100% automated test pass |
 | **X11 (i3, bspwm, Xfce, GNOME X11)** | EWMH (`_NET_ACTIVE_WINDOW` via `xdotool`) | `X11Adapter` | Implemented; 100% automated test pass |
-| **KDE Plasma (Wayland)** | KWin Scripting / D-Bus | Planned follow-on | Under evaluation |
-| **GNOME (Wayland)** | Mutter D-Bus / XDG Desktop Portal | Planned follow-on | Restricted by Wayland security model |
+| **KDE Plasma (Wayland)** | KWin Scripting / D-Bus | `KdeAdapter` | Implemented; 100% automated test pass |
+| **GNOME (Wayland)** | Mutter D-Bus (`org.gnome.Shell.Introspect`) | `GnomeAdapter` | Implemented; 100% automated test pass |
 
 ---
 
