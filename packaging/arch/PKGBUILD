@@ -1,0 +1,84 @@
+# Maintainer: Wowie Contributors <contributors@wowie.local>
+pkgname=wowie
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Linux-first desktop AI companion with activity awareness and 3D character overlay"
+arch=('x86_64')
+url="https://github.com/vijaygovindBiju/Wowie-"
+license=('MIT' 'Apache-2.0')
+depends=('sqlite' 'gcc-libs' 'glibc')
+optdepends=(
+    'hyprland: Recommended Wayland compositor with active window awareness'
+    'sway: Alternative Wayland compositor support'
+    'libnotify: Desktop notification support'
+)
+makedepends=('cargo' 'rust')
+provides=('wowie' 'wowie-overlay' 'wowie-browser-host')
+conflicts=('wowie-git')
+options=('!lto' '!debug')
+
+_find_root() {
+    if [ -f "$startdir/../../Cargo.toml" ]; then
+        echo "$startdir/../.."
+    elif [ -f "$srcdir/Cargo.toml" ]; then
+        echo "$srcdir"
+    else
+        echo "$PWD"
+    fi
+}
+
+build() {
+    local repo_root
+    repo_root="$(_find_root)"
+    cd "$repo_root"
+    export CFLAGS="${CFLAGS//-flto=auto/}"
+    export CFLAGS="${CFLAGS//-flto/}"
+    export CXXFLAGS="${CXXFLAGS//-flto=auto/}"
+    export CXXFLAGS="${CXXFLAGS//-flto/}"
+    export LDFLAGS="${LDFLAGS//-flto=auto/}"
+    export LDFLAGS="${LDFLAGS//-flto/}"
+    export RUSTUP_TOOLCHAIN=stable
+    export CARGO_TARGET_DIR=target
+    cargo build --release --locked --workspace
+}
+
+check() {
+    local repo_root
+    repo_root="$(_find_root)"
+    cd "$repo_root"
+    export CFLAGS="${CFLAGS//-flto=auto/}"
+    export CFLAGS="${CFLAGS//-flto/}"
+    export CXXFLAGS="${CXXFLAGS//-flto=auto/}"
+    export CXXFLAGS="${CXXFLAGS//-flto/}"
+    export LDFLAGS="${LDFLAGS//-flto=auto/}"
+    export LDFLAGS="${LDFLAGS//-flto/}"
+    export RUSTUP_TOOLCHAIN=stable
+    export CARGO_TARGET_DIR=target
+    cargo test --release --locked --workspace
+}
+
+package() {
+    local repo_root
+    repo_root="$(_find_root)"
+
+    # Binaries
+    install -Dm755 "$repo_root/target/release/wowie" "$pkgdir/usr/bin/wowie"
+    install -Dm755 "$repo_root/target/release/wowie-overlay" "$pkgdir/usr/bin/wowie-overlay"
+    install -Dm755 "$repo_root/target/release/wowie-browser-host" "$pkgdir/usr/bin/wowie-browser-host"
+
+    # Desktop Entry
+    install -Dm644 "$repo_root/packaging/arch/wowie.desktop" "$pkgdir/usr/share/applications/wowie.desktop"
+
+    # Icons
+    install -Dm644 "$repo_root/packaging/arch/wowie.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/wowie.svg"
+    install -Dm644 "$repo_root/packaging/arch/icons/wowie.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/wowie.png"
+
+    # Browser Native Messaging Manifests (system-wide)
+    install -Dm644 "$repo_root/extensions/native-messaging/org.wowie.browser_host.firefox.json" "$pkgdir/usr/lib/mozilla/native-messaging-hosts/org.wowie.browser_host.json"
+    install -Dm644 "$repo_root/extensions/native-messaging/org.wowie.browser_host.json" "$pkgdir/etc/chromium/native-messaging-hosts/org.wowie.browser_host.json"
+    install -Dm644 "$repo_root/extensions/native-messaging/org.wowie.browser_host.json" "$pkgdir/etc/opt/chrome/native-messaging-hosts/org.wowie.browser_host.json"
+
+    # Licenses
+    install -Dm644 "$repo_root/LICENSE-MIT" "$pkgdir/usr/share/licenses/$pkgname/LICENSE-MIT"
+    install -Dm644 "$repo_root/LICENSE-APACHE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE-APACHE"
+}

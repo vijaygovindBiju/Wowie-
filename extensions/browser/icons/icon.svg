@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="50%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded rectangle -->
+  <rect width="256" height="256" rx="56" fill="url(#bgGrad)" stroke="#4338ca" stroke-width="4"/>
+
+  <!-- Outer focus ring -->
+  <circle cx="128" cy="128" r="76" fill="none" stroke="#6366f1" stroke-width="6" stroke-dasharray="12 8" opacity="0.6"/>
+
+  <!-- Companion Sparkle Body -->
+  <g filter="url(#glow)">
+    <!-- Central 4-pointed star spark -->
+    <path d="M 128 48 C 128 88 128 98 168 128 C 128 158 128 168 128 208 C 128 168 128 158 88 128 C 128 98 128 88 128 48 Z" fill="url(#glowGrad)"/>
+    <!-- Center glowing core -->
+    <circle cx="128" cy="128" r="22" fill="#ffffff" opacity="0.95"/>
+    <circle cx="128" cy="128" r="14" fill="#38bdf8"/>
+    <!-- Small companion eyes -->
+    <circle cx="123" cy="126" r="3" fill="#ffffff"/>
+    <circle cx="133" cy="126" r="3" fill="#ffffff"/>
+  </g>
+
+  <!-- Orbiting focus satellite -->
+  <circle cx="196" cy="100" r="7" fill="#38bdf8" filter="url(#glow)"/>
+  <circle cx="68" cy="162" r="5" fill="#818cf8" opacity="0.8"/>
+</svg>

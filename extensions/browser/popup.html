@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wowie Focus Companion</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo-title">
+        <span class="logo-icon">✨</span>
+        <span class="app-title">Wowie Companion</span>
+      </div>
+      <div id="status-badge" class="badge badge-offline">Offline</div>
+    </header>
+
+    <section class="card">
+      <div class="field-label">Active Reported Origin</div>
+      <div id="origin-display" class="origin-box">Scanning...</div>
+      <div id="error-message" class="error-box hidden"></div>
+    </section>
+
+    <section class="card">
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-title">Browser Origin Reporting</div>
+          <div class="toggle-desc">Share active domain with Wowie desktop coach</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="reporting-toggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="card privacy-card">
+      <div class="privacy-title">🔒 Privacy Guarantees</div>
+      <ul class="privacy-list">
+        <li><strong>Origin-Only:</strong> Full URLs, pathnames, and search parameters are stripped before transmission.</li>
+        <li><strong>Zero Screen/DOM Access:</strong> Form inputs, keystrokes, and webpage text are never inspected.</li>
+        <li><strong>Incognito Protection:</strong> Private browsing windows are completely omitted.</li>
+        <li><strong>Local Processing:</strong> Transmitted exclusively over local stdio to your native companion.</li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <span>Wowie Focus Companion v0.1.0</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -294,3 +294,41 @@ async fn test_platform_detector_hyprland_on_arch() {
         assert!(sample_res.is_ok(), "Sampling on Hyprland should succeed");
     }
 }
+
+#[tokio::test]
+async fn test_observer_integrates_native_messaging_origin_cache() {
+    let mock = Arc::new(MockObserver::with_fixed(WindowMetadata::new(
+        Some("brave-browser".to_string()),
+        Some("Untitled Page".to_string()), // Title heuristic will yield None
+        None,
+        false,
+    )));
+    let observer = ActivityObserver::new(mock, ObserverConfig::default());
+    observer.start().await.expect("Starts observer");
+
+    // Write to native messaging cache
+    let cache_path = wowie_observer::native_messaging::default_origin_cache_path();
+    wowie_observer::native_messaging::write_cached_origin(
+        &cache_path,
+        "https://crates.io",
+        true,
+        Some("crates.io"),
+    )
+    .expect("Writes cache");
+
+    let session_id = SessionId::from_uuid(Uuid::new_v4());
+    let consent = ConsentSnapshot {
+        monitoring_enabled: true,
+        window_title_redaction_enabled: false,
+        browser_origin_enabled: true,
+        granted_at: Utc::now(),
+    };
+
+    let observation = observer
+        .sample(session_id, &consent, Utc::now())
+        .await
+        .expect("Sampling succeeds");
+
+    assert_eq!(observation.origin.as_deref(), Some("https://crates.io"));
+    assert_eq!(observation.source, ObservationSource::BrowserOrigin);
+}

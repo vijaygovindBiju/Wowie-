@@ -1,0 +1,21 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Wowie
+GenericName=AI Focus Companion
+Comment=Linux-first desktop AI companion with activity awareness and 3D character overlay
+Exec=wowie run
+Icon=wowie
+Terminal=true
+Categories=Utility;Development;Office;
+Keywords=focus;productivity;companion;coach;avatar;vrm;
+StartupNotify=true
+Actions=Overlay;Demo;
+
+[Desktop Action Overlay]
+Name=Launch 3D Companion Overlay
+Exec=wowie-overlay
+
+[Desktop Action Demo]
+Name=Run Interactive Demo
+Exec=wowie demo

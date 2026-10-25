@@ -5,15 +5,16 @@ Wowie is an implemented, modular Cargo workspace across 8 crates providing a goa
 ## Reading Order
 
 1. [Project Introduction](../README.md) — Vision, implemented capabilities, architecture, and quickstart commands.
-2. [Product Requirements](PRODUCT_REQUIREMENTS.md) — Authoritative user and system requirements (`FR-*`, `NFR-*`).
-3. [Architecture](ARCHITECTURE.md), [Components](COMPONENTS.md), [API Contracts](API_CONTRACTS.md), and [Data Model](DATA_MODEL.md) — Technical boundaries and module contracts.
-4. [User Flows](USER_FLOWS.md) — Implemented end-to-end focus session and coaching interaction paths.
-5. [Accountability Rules](ACCOUNTABILITY_RULES.md) — Authoritative coaching thresholds, consent, recovery, and safety rules.
-6. [Activity Monitoring](ACTIVITY_MONITORING.md), [AI Behavior](AI_BEHAVIOR.md), and [Enforcement](ENFORCEMENT.md) — Subsystem rules, domain extraction boundaries, and hosts-file safety.
-7. [Avatar System](AVATAR_SYSTEM.md), [Privacy/Security](PRIVACY_SECURITY.md), and [Configuration](CONFIGURATION.md) — Character validation, 3D overlay rendering, and threat models.
-8. [Technology Stack](TECH_STACK.md) and [Decision Register](DECISIONS.md), then the [ADRs](adr/) — Evaluated options and accepted architectural decision records.
-9. [Testing](TESTING.md), [Operations](OPERATIONS.md), [Roadmap](ROADMAP.md), and [TODO](TODO.md) — Verification records, test results, and milestone tracking.
-10. [Contributing](../CONTRIBUTING.md) and [Security Policy](../SECURITY.md) — Contributor expectations and vulnerability reporting.
+2. [User Manual](USER_MANUAL.md) — Comprehensive guide to focus workflows, TUI, 3D overlay, browser extension, and CLI.
+3. [Product Requirements](PRODUCT_REQUIREMENTS.md) — Authoritative user and system requirements (`FR-*`, `NFR-*`).
+4. [Architecture](ARCHITECTURE.md), [Components](COMPONENTS.md), [API Contracts](API_CONTRACTS.md), and [Data Model](DATA_MODEL.md) — Technical boundaries and module contracts.
+5. [User Flows](USER_FLOWS.md) — Implemented end-to-end focus session and coaching interaction paths.
+6. [Accountability Rules](ACCOUNTABILITY_RULES.md) — Authoritative coaching thresholds, consent, recovery, and safety rules.
+7. [Activity Monitoring](ACTIVITY_MONITORING.md), [AI Behavior](AI_BEHAVIOR.md), and [Enforcement](ENFORCEMENT.md) — Subsystem rules, domain extraction boundaries, and hosts-file safety.
+8. [Avatar System](AVATAR_SYSTEM.md), [Privacy/Security](PRIVACY_SECURITY.md), and [Configuration](CONFIGURATION.md) — Character validation, 3D overlay rendering, and threat models.
+9. [Technology Stack](TECH_STACK.md) and [Decision Register](DECISIONS.md), then the [ADRs](adr/) — Evaluated options and accepted architectural decision records.
+10. [Testing](TESTING.md), [Operations](OPERATIONS.md), [Roadmap](ROADMAP.md), and [TODO](TODO.md) — Verification records, test results, and milestone tracking.
+11. [Contributing](../CONTRIBUTING.md) and [Security Policy](../SECURITY.md) — Contributor expectations and vulnerability reporting.
 
 ## Authoritative Locations
 

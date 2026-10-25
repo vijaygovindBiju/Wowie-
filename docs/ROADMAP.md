@@ -1,6 +1,6 @@
 # Roadmap
 
-**Status:** Phases 0 through 5 are **Implemented & Verified**. Phase 6 (Release Hardening & Packaging) is in progress.
+**Status:** Phases 0 through 6 are **Implemented & Verified**. Wowie MVP is Release Ready.
 
 | Phase | Scope | Entry criteria | Exit criteria | Status |
 |---|---|---|---|---|
@@ -10,7 +10,7 @@
 | **3. Goal relevance and AI options** | Rule-based baseline, prompt injection defense, offline heuristic & OpenAI/Ollama compatible provider, structured outputs. | Data contracts and privacy review accepted. | Offline path complete; timeout/injection/malformed-output tests pass; cloud data disclosure is exact; AI cannot invoke OS actions (548 tests pass). | **COMPLETED** |
 | **4. Temporary enforcement** | Reversible, user-requested, explicitly scoped website-block adapter with crash recovery. | Platform feasibility and abuse review; separate enforcement ADR accepted. | Preview/consent/expiry/stop/override/audit flow passes; absence/failure leaves access available; pre-existing hosts lines preserved. | **COMPLETED** |
 | **5. Custom character milestone** | Import and render supported VRM 1.0 / glTF formats with bounded validation; Wayland transparent 3D overlay with mood reactions. | Format and renderer ADR accepted after compatibility spike; licensing review. | User asset imports safely within measured limits; software rasterizer runs at ~24% CPU @ 30 FPS (<35MB RSS); desktop notifications & ASCII fallback verified. | **COMPLETED** |
-| **6. Release hardening** | Packaging (PKGBUILD, desktop entry), WebExtension native host companion, user documentation. | Core MVP criteria pass. | Reproducible release candidate, dependency/license inventory, privacy/security review, tested support statement, rollback/uninstall procedure. | **IN PROGRESS** |
+| **6. Release hardening** | Packaging (PKGBUILD, desktop entry), WebExtension native host companion, user documentation. | Core MVP criteria pass. | Reproducible release candidate, dependency/license inventory, privacy/security review, tested support statement, rollback/uninstall procedure. | **COMPLETED** |
 
 ## Implemented Milestones Summary
 

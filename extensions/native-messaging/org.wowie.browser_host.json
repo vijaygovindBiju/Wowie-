@@ -1,0 +1,9 @@
+{
+  "name": "org.wowie.browser_host",
+  "description": "Wowie Desktop AI Companion Native Messaging Host",
+  "path": "/usr/bin/wowie-browser-host",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://*/*"
+  ]
+}

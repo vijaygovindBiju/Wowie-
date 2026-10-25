@@ -63,10 +63,10 @@ To resolve title extraction limitations safely without broad surveillance permis
 
 ## Linux Compositor Compatibility Matrix
 
-| Compositor / Desktop | Protocol / Interface | Integration Status | Signal Quality |
-|---|---|---|---|
-| **Hyprland** | UNIX IPC socket (`hyprctl activewindow -j`) | Native (`HyprlandAdapter`) | High (instant active window metadata) |
-| **Sway / wlroots** | `swaymsg -t get_tree` | Planned follow-on | High |
-| **GNOME (Wayland)** | Mutter D-Bus / XDG Portal | Under evaluation | Restricted by Wayland security model |
-| **KDE Plasma (Wayland)** | KWin Scripting / D-Bus | Under evaluation | Medium |
-| **X11 (Any WM)** | EWMH / `_NET_ACTIVE_WINDOW` | Native (`X11Adapter`) | High |
+| Compositor / Desktop | Protocol / Interface | Integration Status | Signal Quality | Hardware Verification |
+|---|---|---|---|---|
+| **Hyprland** | UNIX IPC socket (`hyprctl activewindow -j`) | Native (`HyprlandAdapter`) | High (instant active window metadata) | **Physically Verified Live** |
+| **Sway / wlroots** | `swaymsg -t get_tree` | Native (`SwayAdapter`) | High | Automated tests passing; live hardware test pending |
+| **X11 (Any EWMH WM)** | EWMH / `_NET_ACTIVE_WINDOW` via `xdotool` | Native (`X11Adapter`) | High | Automated tests passing; live hardware test pending |
+| **GNOME (Wayland)** | Mutter D-Bus / XDG Portal | Planned follow-on | Restricted by Wayland security model | Pending portal evaluation |
+| **KDE Plasma (Wayland)** | KWin Scripting / D-Bus | Planned follow-on | Medium | Pending KWin script evaluation |

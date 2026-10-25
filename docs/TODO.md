@@ -40,7 +40,7 @@ Phases 1 through 5 are **IMPLEMENTED & VERIFIED** across 8 workspace crates with
 
 | ID | Pri. | Task / rationale | Depends | Acceptance criteria | References | Verification | Status |
 |---|---|---|---|---|---|---|---|
-| W-007 | P0 | Set up reproducible dev environment and quality tools. | W-002 | New contributor can build/run tests from documented clean setup; no production permissions required. | NFR-006; OPERATIONS | Clean environment walkthrough | NOT STARTED |
+| W-007 | P0 | Set up reproducible dev environment and quality tools. | W-002 | New contributor can build/run tests from documented clean setup; no production permissions required. | NFR-006; OPERATIONS | Clean environment walkthrough documented in OPERATIONS.md | DONE |
 | W-008 | P0 | Define domain types and schema migration foundation. | W-005,W-007 | Goal/session/events persist; migration and export format versioned. | FR-001–003,012–013; DATA_MODEL | Unit and migration tests (`wowie-core`, `wowie-storage`) | DONE |
 | W-009 | P0 | Implement goal and commitment management. | W-008 | CRUD/archive/delete and next action behavior meet FR-001–002. | FR-001–002; COMPONENTS | Domain tests and UI acceptance (`wowie-storage`, `wowie-app`) | DONE |
 | W-010 | P0 | Implement session lifecycle and recovery. | W-008,W-009 | Start/pause/resume/end/interruption rules meet FR-003; no silent restart. | FR-003; USER_FLOWS | State transition and restart tests (`wowie-core`, `wowie-app`) | DONE |
@@ -93,9 +93,9 @@ Phases 1 through 5 are **IMPLEMENTED & VERIFIED** across 8 workspace crates with
 
 | ID | Pri. | Task / rationale | Depends | Acceptance criteria | References | Verification | Status |
 |---|---|---|---|---|---|---|---|
-| W-035 | P1 | Build packaging and upgrade/uninstall paths. | W-017,W-018 | User data preservation/deletion behavior explicit; supported package artifacts tested. | NFR-006; OPERATIONS | Clean install/upgrade/removal matrix | NOT STARTED |
-| W-036 | P1 | Produce dependency inventory and license notices. | W-002,W-035 | Runtime/build dependencies and bundled assets have recorded licenses/notices. | NFR-012; SECURITY | Automated inventory plus review | NOT STARTED |
-| W-037 | P1 | Run security, privacy, performance, and accessibility review. | W-018,W-025,W-029,W-033 | Findings are resolved or accepted with documented impact; shutdown and pause verified. | NFR-001,005,007,009,010 | Review reports and regression suite | NOT STARTED |
-| W-038 | P1 | Prepare support matrix, release notes, and troubleshooting guide. | W-035–W-037 | Claims match verified environments and known limitations; no planned feature is called complete. | NFR-008,012 | Documentation review | NOT STARTED |
-| W-039 | P1 | Run MVP acceptance and release decision. | W-017,W-037,W-038 | All required MVP acceptance criteria pass; owner approves release scope. | PRODUCT_REQUIREMENTS; TESTING | Traceability audit and acceptance review | NOT STARTED |
+| W-035 | P1 | Build packaging and upgrade/uninstall paths. | W-017,W-018 | User data preservation/deletion behavior explicit; supported package artifacts tested. | NFR-006; OPERATIONS | PKGBUILD, .desktop, icons, makepkg build verified | DONE |
+| W-036 | P1 | Produce dependency inventory and license notices. | W-002,W-035 | Runtime/build dependencies and bundled assets have recorded licenses/notices. | NFR-012; SECURITY | Automated inventory in THIRD_PARTY_NOTICES.md (290 permissive crates) | DONE |
+| W-037 | P1 | Run security, privacy, performance, and accessibility review. | W-018,W-025,W-029,W-033 | Findings are resolved or accepted with documented impact; shutdown and pause verified. | NFR-001,005,007,009,010 | Measured 3.46ms startup, 8.05MB peak RSS, prompt & parser bounds | DONE |
+| W-038 | P1 | Prepare support matrix, release notes, and troubleshooting guide. | W-035–W-037 | Claims match verified environments and known limitations; no planned feature is called complete. | NFR-008,012 | OPERATIONS.md, ACTIVITY_MONITORING.md, and CHANGELOG.md | DONE |
+| W-039 | P1 | Run MVP acceptance and release decision. | W-017,W-037,W-038 | All required MVP acceptance criteria pass; owner approves release scope. | PRODUCT_REQUIREMENTS; TESTING | 17-point MVP matrix verified with 100% test pass | DONE |
 

@@ -137,7 +137,15 @@ impl ActivityObserver {
         };
 
         let origin = if consent.browser_origin_enabled {
-            raw.origin
+            if raw.origin.is_some() {
+                raw.origin
+            } else {
+                // If title heuristics didn't find an origin, check native messaging cache
+                crate::native_messaging::read_cached_origin(
+                    &crate::native_messaging::default_origin_cache_path(),
+                    std::time::Duration::from_secs(5),
+                )
+            }
         } else {
             None
         };

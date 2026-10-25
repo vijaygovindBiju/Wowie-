@@ -39,6 +39,7 @@ reqwest = { version = "0.12", default-features = false, features = ["json", "rus
 gltf = { version = "1.4", features = ["import", "names", "utils"] }
 winit = { version = "0.30", default-features = false, features = ["wayland", "x11", "rwh_06"] }
 softbuffer = { version = "0.4", default-features = false, features = ["wayland", "x11"] }
+url = "2.5"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

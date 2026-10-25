@@ -8,6 +8,33 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = std::env::args().collect();
     let command = args.get(1).map_or("run", String::as_str);
 
+    if command == "--help" || command == "-h" || command == "help" {
+        println!(
+            "wowie {}\n\
+             Linux-first desktop AI companion with activity awareness and 3D character overlay.\n\n\
+             USAGE:\n    \
+                 wowie [SUBCOMMAND]\n\n\
+             SUBCOMMANDS:\n    \
+                 run            Launch interactive terminal user interface (default)\n    \
+                 demo           Run end-to-end automated interactive demo workflow\n    \
+                 overlay        Launch 3D companion desktop overlay window\n    \
+                 status         Display active session and companion state\n    \
+                 goal           Manage goals and ambitions\n    \
+                 session        Control focus sessions (start/pause/resume/break/complete)\n    \
+                 character      Manage 3D VRM/glTF character models\n    \
+                 tick           Evaluate single observer and coaching tick\n    \
+                 --version, -V  Print version information\n    \
+                 --help, -h     Print this help message",
+            env!("CARGO_PKG_VERSION")
+        );
+        return Ok(());
+    }
+
+    if command == "--version" || command == "-V" {
+        println!("wowie {}", env!("CARGO_PKG_VERSION"));
+        return Ok(());
+    }
+
     let config_path = AppSettings::default_path();
     let settings = AppSettings::load_or_default(&config_path);
 

@@ -15,6 +15,11 @@ thiserror.workspace = true
 tokio.workspace = true
 async-trait.workspace = true
 uuid.workspace = true
+url.workspace = true
+
+[[bin]]
+name = "wowie-browser-host"
+path = "src/bin/wowie_browser_host.rs"
 
 [lints]
 workspace = true

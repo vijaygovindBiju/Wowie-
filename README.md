@@ -121,6 +121,40 @@ flowchart LR
 - **`wowie-enforcement`**: Scoped, reversible website distraction enforcement with essential developer tool immunities, section-demarcated hosts handling, crash recovery, and single-use confirmation tokens.
 - **`wowie-app`**: Application coordinator, interactive 8-screen terminal UI, overlay bridge, and CLI subcommands.
 
+## Installation & Packaging
+
+### Arch Linux (`makepkg` / AUR)
+
+Wowie provides an official, audited `PKGBUILD` and desktop integration in `packaging/arch/`:
+
+```bash
+# Build the Arch Linux package from source
+cd packaging/arch
+makepkg -efd
+
+# Install the generated package
+sudo pacman -U wowie-0.1.0-1-x86_64.pkg.tar.zst
+```
+
+The package installs:
+- Executables: `/usr/bin/wowie`, `/usr/bin/wowie-overlay`, `/usr/bin/wowie-browser-host`
+- Desktop Launcher: `/usr/share/applications/wowie.desktop`
+- Icons: `/usr/share/icons/hicolor/scalable/apps/wowie.svg`
+- Browser Native Messaging Manifests: `/etc/chromium/native-messaging-hosts/`, `/etc/opt/chrome/native-messaging-hosts/`, `/usr/lib/mozilla/native-messaging-hosts/`
+
+User data in `~/.local/share/wowie` and `~/.config/wowie` is never touched by package upgrades or uninstallation.
+
+### Browser Extension (WebExtensions Native Messaging)
+
+To report active browser origins with strict path and query parameter stripping:
+
+1. Register the native messaging host (no root required):
+   ```bash
+   ./scripts/install-browser-host.sh
+   ```
+2. In your browser (Brave, Chrome, Chromium, or Firefox), load the unpacked extension from `extensions/browser/`.
+3. Open the extension popup to verify the connection status and review privacy disclosures.
+
 ## Quickstart & Running
 
 ### Prerequisites
@@ -183,6 +217,11 @@ cargo run -p wowie-app -- character import /path/to/character.vrm
 
 Comprehensive documentation is available in the [`docs/`](docs/) directory:
 
+- [User Manual](docs/USER_MANUAL.md) — Comprehensive guide to focus workflows, TUI navigation, 3D overlay, browser extension, and CLI.
+- [Operations & Release Guide](docs/OPERATIONS.md) — Packaging, clean setup walkthrough, support matrix, and performance metrics.
+- [Troubleshooting & Diagnostics](docs/TROUBLESHOOTING.md) — Edge case recovery, display configuration, and /etc/hosts restoration.
+- [Changelog](docs/CHANGELOG.md) — Release notes and milestone completion history.
+- [Third-Party Notices](THIRD_PARTY_NOTICES.md) — License inventory and attribution for all 290 dependencies.
 - [Product Requirements](docs/PRODUCT_REQUIREMENTS.md) — Requirement specifications and acceptance criteria.
 - [Architecture](docs/ARCHITECTURE.md) — System boundaries, data flows, and module contracts.
 - [Components](docs/COMPONENTS.md) — Responsibilities and interfaces for each workspace crate.

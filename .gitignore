@@ -16,3 +16,11 @@
 # OS files
 .DS_Store
 Thumbs.db
+
+# Packaging build outputs
+*.pkg.tar.zst
+*.pkg.tar.xz
+/packaging/arch/pkg/
+/packaging/arch/src/
+/packaging/arch/*.pkg.tar*
+makepkg_env.txt
