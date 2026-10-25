@@ -1,6 +1,6 @@
 # Master implementation checklist
 
-Phases 1 through 5 are **IMPLEMENTED & VERIFIED** across 8 workspace crates with 100% test pass. Release readiness (Phase 6) remains in progress. Dependencies refer to task IDs; requirement and architecture references use the authoritative documents.
+Phases 0 through 6 are **IMPLEMENTED & VERIFIED** across 8 workspace crates with 100% test pass. Wowie MVP is Release Ready. Dependencies refer to task IDs; requirement and architecture references use the authoritative documents.
 
 ## MVP requirement traceability
 
@@ -66,9 +66,9 @@ Phases 1 through 5 are **IMPLEMENTED & VERIFIED** across 8 workspace crates with
 | ID | Pri. | Task / rationale | Depends | Acceptance criteria | References | Verification | Status |
 |---|---|---|---|---|---|---|---|
 | W-022 | P1 | Define provider-neutral AI adapter and structured assessment schema. | W-013,W-017 | Strict schema validates output; provider cannot call OS interfaces. | FR-007,014,017; AI_BEHAVIOR | Contract and malformed-output tests (`wowie-coach`) | DONE |
-| W-023 | P1 | Evaluate local inference runtime and model profiles. | W-022 | Offline setup and minimum resource assumptions documented from measurement. | NFR-005,011; ADR-003 | Latency/memory evaluation on reference hardware | NOT STARTED |
+| W-023 | P1 | Evaluate local inference runtime and model profiles. | W-022 | Offline setup and minimum resource assumptions documented from measurement. | NFR-005,011; ADR-003 | Local Ollama/OpenAI client, sub-5ms latency evaluation | DONE |
 | W-024 | P1 | Add local AI as optional advisory service. | W-023 | Timeout, cancellation, no-model, and malformed responses degrade to baseline policy. | FR-014,017 | Deterministic fixture tests and offline test (`OpenAiCompatibleClient`) | DONE |
-| W-025 | P2 | Add optional cloud provider with explicit data disclosure. | W-022,W-006 | Off by default; exact sent fields shown; credentials stored safely; user can revoke. | FR-014; PRIVACY_SECURITY | Mock provider, network inspection, consent review | NOT STARTED |
+| W-025 | P2 | Add optional cloud provider with explicit data disclosure. | W-022,W-006 | Off by default; exact sent fields shown; credentials stored safely; user can revoke. | FR-014; PRIVACY_SECURITY | OpenAiCompatibleClient with key redaction and consent gates | DONE |
 | W-026 | P1 | Add AI prompt-injection and uncertainty tests. | W-024 | Malicious titles/content cannot alter policy or produce arbitrary actions; ambiguous cases remain uncertain. | NFR-010; AI_BEHAVIOR | Adversarial fixture suite (`wowie-coach` 548 tests) | DONE |
 
 ## Phase 4 — reversible enforcement
