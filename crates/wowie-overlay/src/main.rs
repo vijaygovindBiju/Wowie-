@@ -67,9 +67,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--no-hud" => {
                 config.show_hud = false;
             }
+            "--roam" => {
+                config.free_roam = true;
+            }
+            "--no-roam" => {
+                config.free_roam = false;
+            }
             "--help" | "-h" => {
                 println!(
-                    "Usage: wowie-overlay [--width <u32>] [--height <u32>] [--fps <u32>] [--prefer-gpu] [--show-hud]"
+                    "Usage: wowie-overlay [--width <u32>] [--height <u32>] [--fps <u32>] [--prefer-gpu] [--show-hud] [--roam|--no-roam]"
                 );
                 return Ok(());
             }
@@ -88,6 +94,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Controls:");
     println!("  • [Q] or [Esc]: Quit overlay");
     println!("  • [H]: Toggle hide/show");
+    println!("  • [F]: Toggle autonomous screen roaming (float freely)");
     println!("  • [U]: Toggle HUD glass pill");
     println!(
         "  • [M]: Cycle companion state (Idle, Focused, Distraction Alert, Snoozed, Celebration)"

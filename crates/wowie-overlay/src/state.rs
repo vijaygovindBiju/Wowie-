@@ -3,6 +3,10 @@ use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::{Arc, Mutex};
 use wowie_avatar::model::{CompanionMood, Model3D};
 
+const fn default_true() -> bool {
+    true
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OverlayConfig {
     pub width: u32,
@@ -13,6 +17,8 @@ pub struct OverlayConfig {
     pub show_hud: bool,
     #[serde(default)]
     pub prefer_gpu: bool,
+    #[serde(default = "default_true")]
+    pub free_roam: bool,
 }
 
 impl Default for OverlayConfig {
@@ -25,6 +31,7 @@ impl Default for OverlayConfig {
             enable_hyprland_auto_rules: true,
             show_hud: false,
             prefer_gpu: false,
+            free_roam: true,
         }
     }
 }
@@ -35,6 +42,7 @@ pub enum OverlayControlEvent {
     SetModel(Box<Model3D>),
     SetStatus(String),
     ToggleVisibility,
+    ToggleRoam,
     Quit,
 }
 

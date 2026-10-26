@@ -1,6 +1,7 @@
 use crate::backend::{select_rendering_backend, GpuAccelerationPipeline};
 use crate::error::OverlayError;
 use crate::renderer::Renderer3D;
+use crate::roam::RoamController;
 use crate::state::{OverlayConfig, OverlayControlEvent};
 use std::num::NonZeroU32;
 use std::sync::mpsc::Receiver;
@@ -114,6 +115,7 @@ struct OverlayApp {
     last_mouse_pos: (f64, f64),
     should_exit: bool,
     has_applied_post_map_rules: bool,
+    roam: RoamController,
 }
 
 impl OverlayApp {
@@ -128,6 +130,7 @@ impl OverlayApp {
         let backend = select_rendering_backend(config.prefer_gpu);
         let gpu_pipeline =
             GpuAccelerationPipeline::with_backend(backend, config.width, config.height);
+        let roam = RoamController::new(config.width as f32, config.height as f32, config.free_roam);
         Self {
             config,
             model,
@@ -147,6 +150,7 @@ impl OverlayApp {
             last_mouse_pos: (0.0, 0.0),
             should_exit: false,
             has_applied_post_map_rules: false,
+            roam,
         }
     }
 
@@ -236,6 +240,9 @@ impl OverlayApp {
                     OverlayControlEvent::ToggleVisibility => {
                         self.is_visible = !self.is_visible;
                     }
+                    OverlayControlEvent::ToggleRoam => {
+                        let _ = self.roam.toggle();
+                    }
                     OverlayControlEvent::Quit => {
                         self.should_exit = true;
                     }
@@ -262,6 +269,16 @@ impl OverlayApp {
         }
 
         let elapsed = self.start_time.elapsed().as_secs_f32();
+        let now = Instant::now();
+        let dt = now
+            .duration_since(self.last_frame_time)
+            .as_secs_f32()
+            .min(0.1);
+        self.last_frame_time = now;
+
+        // Advance autonomous screen-roaming physics and dispatch window move
+        self.roam.update(self.current_mood, dt);
+        self.roam.try_dispatch_move();
 
         // 1. Render 3D model
         self.renderer
@@ -424,6 +441,13 @@ impl ApplicationHandler for OverlayApp {
                     Key::Character(c) if c.eq_ignore_ascii_case("q") => event_loop.exit(),
                     Key::Character(c) if c.eq_ignore_ascii_case("h") => {
                         self.is_visible = !self.is_visible;
+                    }
+                    Key::Character(c) if c.eq_ignore_ascii_case("f") => {
+                        let active = self.roam.toggle();
+                        println!(
+                            "Autonomous screen roaming: {}",
+                            if active { "ENABLED" } else { "PAUSED" }
+                        );
                     }
                     Key::Character(c) if c.eq_ignore_ascii_case("u") => {
                         self.config.show_hud = !self.config.show_hud;

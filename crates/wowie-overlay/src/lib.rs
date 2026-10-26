@@ -9,6 +9,7 @@ pub mod backend;
 pub mod error;
 pub mod math;
 pub mod renderer;
+pub mod roam;
 pub mod state;
 pub mod window;
 
@@ -19,5 +20,6 @@ pub use backend::{
 pub use error::OverlayError;
 pub use math::{Mat4, Vec3, Vec4};
 pub use renderer::{Camera3D, RenderStats, Renderer3D};
+pub use roam::RoamController;
 pub use state::{OverlayBridge, OverlayConfig, OverlayControlEvent};
 pub use window::DesktopOverlay;
