@@ -23,7 +23,7 @@ impl Default for OverlayConfig {
             fps_limit: 30,
             always_on_top: true,
             enable_hyprland_auto_rules: true,
-            show_hud: true,
+            show_hud: false,
             prefer_gpu: false,
         }
     }

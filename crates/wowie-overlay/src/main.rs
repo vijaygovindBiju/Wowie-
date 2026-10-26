@@ -61,12 +61,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--prefer-gpu" => {
                 config.prefer_gpu = true;
             }
+            "--show-hud" => {
+                config.show_hud = true;
+            }
             "--no-hud" => {
                 config.show_hud = false;
             }
             "--help" | "-h" => {
                 println!(
-                    "Usage: wowie-overlay [--width <u32>] [--height <u32>] [--fps <u32>] [--prefer-gpu] [--no-hud]"
+                    "Usage: wowie-overlay [--width <u32>] [--height <u32>] [--fps <u32>] [--prefer-gpu] [--show-hud]"
                 );
                 return Ok(());
             }
