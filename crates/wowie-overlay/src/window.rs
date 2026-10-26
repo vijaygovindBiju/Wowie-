@@ -52,6 +52,24 @@ impl DesktopOverlay {
         std::env::var("WAYLAND_DISPLAY").is_ok() || std::env::var("DISPLAY").is_ok()
     }
 
+    /// Pre-register Hyprland window rules BEFORE creating the window so it maps borderless and transparent
+    pub fn pre_register_hyprland_rules(enabled: bool) {
+        if !enabled {
+            return;
+        }
+
+        let is_hyprland = std::env::var("HYPRLAND_INSTANCE_SIGNATURE").is_ok()
+            || std::env::var("XDG_CURRENT_DESKTOP")
+                .is_ok_and(|d| d.to_lowercase().contains("hyprland"));
+
+        if is_hyprland {
+            let lua_rule = r#"hl.window_rule({ name = "wowie-overlay", match = {title = ".*Wowie Companion.*"}, float = true, pin = true, no_blur = true, border_size = 0, no_shadow = true, rounding = 0, opaque = false })"#;
+            let _ = std::process::Command::new("hyprctl")
+                .args(["repl", lua_rule])
+                .output();
+        }
+    }
+
     /// Run the overlay window event loop. Blocks until window is closed.
     pub fn run(self) -> Result<(), OverlayError> {
         if !Self::is_display_available() {
@@ -59,6 +77,9 @@ impl DesktopOverlay {
                 "Neither WAYLAND_DISPLAY nor DISPLAY is set".to_string(),
             ));
         }
+
+        // Register Hyprland rules beforehand so the compositor doesn't create borders/blur on initial map
+        Self::pre_register_hyprland_rules(self.config.enable_hyprland_auto_rules);
 
         let event_loop = EventLoop::new().map_err(|e| {
             OverlayError::DisplayServerUnavailable(format!("Event loop initialization failed: {e}"))
@@ -140,48 +161,26 @@ impl OverlayApp {
 
         if is_hyprland {
             // Modern Hyprland (0.56+) with Lua configuration
-            let lua_rule = r#"hl.window_rule({ name = "wowie-overlay", match = {title = ".*Wowie Companion.*"}, float = true, pin = true, opaque = false, no_border = true, no_shadow = true, size = "320 400" })"#;
+            let lua_rule = r#"hl.window_rule({ name = "wowie-overlay", match = {title = ".*Wowie Companion.*"}, float = true, pin = true, no_blur = true, border_size = 0, no_shadow = true, rounding = 0, opaque = false })"#;
             let _ = std::process::Command::new("hyprctl")
                 .args(["repl", lua_rule])
                 .output();
 
-            // Legacy Hyprland fallback commands
-            let _ = std::process::Command::new("hyprctl")
-                .args([
-                    "setprop",
-                    "title:^Wowie Companion Overlay$",
-                    "floating",
-                    "1",
-                ])
-                .output();
-            let _ = std::process::Command::new("hyprctl")
-                .args(["setprop", "title:^Wowie Companion Overlay$", "pinned", "1"])
-                .output();
-            let _ = std::process::Command::new("hyprctl")
-                .args(["setprop", "title:^Wowie Companion Overlay$", "opaque", "0"])
-                .output();
-            let _ = std::process::Command::new("hyprctl")
-                .args([
-                    "setprop",
-                    "title:^Wowie Companion Overlay$",
-                    "noborder",
-                    "1",
-                ])
-                .output();
-            let _ = std::process::Command::new("hyprctl")
-                .args([
-                    "setprop",
-                    "title:^Wowie Companion Overlay$",
-                    "noshadow",
-                    "1",
-                ])
-                .output();
-            let _ = std::process::Command::new("hyprctl")
-                .args(["dispatch", "setfloating", "title:^Wowie Companion Overlay$"])
-                .output();
-            let _ = std::process::Command::new("hyprctl")
-                .args(["dispatch", "pin", "title:^Wowie Companion Overlay$"])
-                .output();
+            // Explicit dynamic property dispatch to ensure compositor strips borders, blur, and shadows
+            for (prop, val) in [
+                ("noblur", "1"),
+                ("noborder", "1"),
+                ("noshadow", "1"),
+                ("opaque", "0"),
+                ("rounding", "0"),
+            ] {
+                let cmd = format!(
+                    r#"return hl.dispatch(hl.dsp.window.set_prop({{ match = {{ title = ".*Wowie Companion.*" }}, prop = "{prop}", value = {val} }}))"#
+                );
+                let _ = std::process::Command::new("hyprctl")
+                    .args(["repl", &cmd])
+                    .output();
+            }
         }
     }
 
@@ -297,11 +296,17 @@ impl ApplicationHandler for OverlayApp {
             return;
         }
 
-        let window_attributes = WindowAttributes::default()
+        let mut window_attributes = WindowAttributes::default()
             .with_title("Wowie Companion Overlay")
             .with_inner_size(LogicalSize::new(self.config.width, self.config.height))
             .with_transparent(true)
             .with_decorations(false);
+
+        #[cfg(target_os = "linux")]
+        {
+            use winit::platform::wayland::WindowAttributesExtWayland;
+            window_attributes = window_attributes.with_name("wowie-overlay", "wowie-overlay");
+        }
 
         let window = match event_loop.create_window(window_attributes) {
             Ok(w) => Arc::new(w),
