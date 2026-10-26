@@ -140,7 +140,7 @@ impl OverlayApp {
 
         if is_hyprland {
             // Modern Hyprland (0.56+) with Lua configuration
-            let lua_rule = r#"hl.window_rule({ name = "wowie-overlay", match = {title = ".*Wowie Companion.*"}, float = true, pin = true, size = "320 400" })"#;
+            let lua_rule = r#"hl.window_rule({ name = "wowie-overlay", match = {title = ".*Wowie Companion.*"}, float = true, pin = true, opaque = false, no_border = true, no_shadow = true, size = "320 400" })"#;
             let _ = std::process::Command::new("hyprctl")
                 .args(["repl", lua_rule])
                 .output();
@@ -156,6 +156,25 @@ impl OverlayApp {
                 .output();
             let _ = std::process::Command::new("hyprctl")
                 .args(["setprop", "title:^Wowie Companion Overlay$", "pinned", "1"])
+                .output();
+            let _ = std::process::Command::new("hyprctl")
+                .args(["setprop", "title:^Wowie Companion Overlay$", "opaque", "0"])
+                .output();
+            let _ = std::process::Command::new("hyprctl")
+                .args([
+                    "setprop",
+                    "title:^Wowie Companion Overlay$",
+                    "noborder",
+                    "1",
+                ])
+                .output();
+            let _ = std::process::Command::new("hyprctl")
+                .args([
+                    "setprop",
+                    "title:^Wowie Companion Overlay$",
+                    "noshadow",
+                    "1",
+                ])
                 .output();
             let _ = std::process::Command::new("hyprctl")
                 .args(["dispatch", "setfloating", "title:^Wowie Companion Overlay$"])
@@ -400,6 +419,9 @@ impl ApplicationHandler for OverlayApp {
                     Key::Character(c) if c.eq_ignore_ascii_case("q") => event_loop.exit(),
                     Key::Character(c) if c.eq_ignore_ascii_case("h") => {
                         self.is_visible = !self.is_visible;
+                    }
+                    Key::Character(c) if c.eq_ignore_ascii_case("u") => {
+                        self.config.show_hud = !self.config.show_hud;
                     }
                     Key::Character(c) if c.eq_ignore_ascii_case("m") => {
                         self.cycle_mood();

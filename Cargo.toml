@@ -74,3 +74,6 @@ needless_pass_by_value = "allow"
 suboptimal_flops = "allow"
 significant_drop_tightening = "allow"
 duration_suboptimal_units = "allow"
+
+[patch.crates-io]
+softbuffer = { path = "patches/softbuffer" }

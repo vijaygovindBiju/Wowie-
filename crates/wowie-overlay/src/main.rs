@@ -61,9 +61,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--prefer-gpu" => {
                 config.prefer_gpu = true;
             }
+            "--no-hud" => {
+                config.show_hud = false;
+            }
             "--help" | "-h" => {
                 println!(
-                    "Usage: wowie-overlay [--width <u32>] [--height <u32>] [--fps <u32>] [--prefer-gpu]"
+                    "Usage: wowie-overlay [--width <u32>] [--height <u32>] [--fps <u32>] [--prefer-gpu] [--no-hud]"
                 );
                 return Ok(());
             }
@@ -82,6 +85,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Controls:");
     println!("  • [Q] or [Esc]: Quit overlay");
     println!("  • [H]: Toggle hide/show");
+    println!("  • [U]: Toggle HUD glass pill");
     println!(
         "  • [M]: Cycle companion state (Idle, Focused, Distraction Alert, Snoozed, Celebration)"
     );

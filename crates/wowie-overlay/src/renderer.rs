@@ -50,6 +50,22 @@ pub struct RenderStats {
     pub fps: f32,
 }
 
+/// Pre-multiplies ARGB color for Wayland `wl_shm::Format::Argb8888` alpha compositing
+#[inline]
+pub fn premultiply_argb(color: u32) -> u32 {
+    let alpha = (color >> 24) & 0xFF;
+    if alpha == 0 {
+        0
+    } else if alpha == 255 {
+        color
+    } else {
+        let red = (((color >> 16) & 0xFF) * alpha) / 255;
+        let green = (((color >> 8) & 0xFF) * alpha) / 255;
+        let blue = ((color & 0xFF) * alpha) / 255;
+        (alpha << 24) | (red << 16) | (green << 8) | blue
+    }
+}
+
 #[derive(Debug)]
 pub struct Renderer3D {
     pub width: usize,
@@ -426,12 +442,13 @@ impl Renderer3D {
                         || x == pill_x_start
                         || x == (pill_x_start + pill_w - 1)
                     {
-                        self.color_buffer[idx] = 0xAA6B_7280; // Gray border
+                        self.color_buffer[idx] = premultiply_argb(0xAA6B_7280); // Gray border
                     } else if x < pill_x_start + 6 {
-                        self.color_buffer[idx] = mood_badge_color; // Mood indicator bar
+                        self.color_buffer[idx] = premultiply_argb(mood_badge_color);
+                    // Mood indicator bar
                     } else {
                         // Semi-transparent dark background
-                        self.color_buffer[idx] = 0xEE1E_293B; // Slate dark
+                        self.color_buffer[idx] = premultiply_argb(0xEE1E_293B); // Slate dark
                     }
                 }
             }
