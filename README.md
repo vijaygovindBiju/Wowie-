@@ -1,6 +1,12 @@
-# Wowie
+# Wowie 🤖
 
-**A customizable, goal-aware AI desktop companion that helps you follow through on your ambitions.**
+> **A customizable, goal-aware AI desktop companion that helps you follow through on your ambitions.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Rust](https://img.shields.io/badge/Rust-1.80%2B-orange.svg)](https://www.rust-lang.org)
+[![Platform](https://img.shields.io/badge/Platform-Linux%20(Wayland%20%7C%20X11)-brightgreen.svg)]()
+[![Model Format](https://img.shields.io/badge/3D%20Avatars-VRM%201.0%20%7C%20glTF-purple.svg)]()
+[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Local%20First-success.svg)]()
 
 ## What is Wowie?
 
